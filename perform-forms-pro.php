@@ -3,7 +3,7 @@
  * Plugin Name:       PerForm Pro
  * Plugin URI:        https://dbw-media.de/perform-forms-pro/
  * Description:       Pro add-on for PerForm — conditional logic, multi-step, webhooks, CSV export, SMTP & external CAPTCHA. Docks onto the free PerForm core.
- * Version:           0.2.3
+ * Version:           0.2.4
  * Requires at least: 7.0
  * Requires PHP:      8.1
  * Requires Plugins:  perform-forms
@@ -23,11 +23,11 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Plugin constants — single source of truth.
  */
-define( 'PERFORM_PRO_VERSION', '0.2.3' );
-// Minimum free-core version. 0.2.2 adds the form-container inspector-panel
-// filter the Pro editor script docks onto; against an older core the Pro
-// panels simply would not render, so require the matching core.
-define( 'PERFORM_PRO_MIN_CORE', '0.2.2' );
+define( 'PERFORM_PRO_VERSION', '0.2.4' );
+// Minimum free-core version. 0.2.4 removes the free core's own Integrations
+// panel (Pro now provides it via the inspector-panel filter); running this Pro
+// against an older core would render the webhooks panel twice.
+define( 'PERFORM_PRO_MIN_CORE', '0.2.4' );
 define( 'PERFORM_PRO_FILE', __FILE__ );
 define( 'PERFORM_PRO_DIR', plugin_dir_path( __FILE__ ) );
 define( 'PERFORM_PRO_URL', plugin_dir_url( __FILE__ ) );
