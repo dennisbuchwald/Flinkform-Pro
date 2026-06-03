@@ -30,6 +30,10 @@ define( 'PERFORM_PRO_FILE', __FILE__ );
 define( 'PERFORM_PRO_DIR', plugin_dir_path( __FILE__ ) );
 define( 'PERFORM_PRO_URL', plugin_dir_url( __FILE__ ) );
 
+// Register the Pro autoloader before anything touches the PerFormPro namespace.
+require_once PERFORM_PRO_DIR . 'includes/Autoloader.php';
+\PerFormPro\Autoloader::register();
+
 /**
  * Dock onto the free PerForm core via the bridge layer.
  *
@@ -81,11 +85,12 @@ function perform_pro_register_modules(): void {
 		return;
 	}
 
-	// M-b: nothing wired yet. Pro field blocks, conditional logic, webhooks,
-	// export, SMTP and CAPTCHA providers register here from M-c onward, e.g.:
-	//
-	//   add_filter( 'perform_block_dirs', 'perform_pro_register_blocks' );
-	//   add_filter( 'perform_spam_providers', 'perform_pro_register_captcha' );
+	// M-c-a: CSV export. Owns the Export CSV button + the export request
+	// handler, reading through the free core's submissions Repository.
+	( new \PerFormPro\Export\ExportController() )->register();
+
+	// Further modules dock here from the next M-c slices: conditional logic,
+	// multi-step, webhooks, SMTP, external CAPTCHA providers.
 }
 add_action( 'perform_register_modules', 'perform_pro_register_modules' );
 

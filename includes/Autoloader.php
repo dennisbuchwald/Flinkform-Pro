@@ -1,0 +1,55 @@
+<?php
+/**
+ * PSR-4 autoloader for the PerForm Pro add-on.
+ *
+ * Maps the `PerFormPro\` namespace to this plugin's `includes/` directory.
+ * Mirrors the free core's autoloader: dependency-free, no Composer, no
+ * `vendor/`. The free core's own autoloader resolves the `PerForm\` classes
+ * the add-on consumes (e.g. \PerForm\Submissions\Repository) — this one only
+ * owns the `PerFormPro\` tree.
+ *
+ * @package PerFormPro
+ * @since 0.2.0
+ */
+
+declare( strict_types = 1 );
+
+namespace PerFormPro;
+
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * Minimal PSR-4 autoloader for the Pro add-on.
+ */
+final class Autoloader {
+
+	private const NAMESPACE_PREFIX = 'PerFormPro\\';
+
+	/**
+	 * Register the autoloader with SPL.
+	 *
+	 * @return void
+	 */
+	public static function register(): void {
+		spl_autoload_register( [ self::class, 'load' ] );
+	}
+
+	/**
+	 * Resolve a class name to a file path and require it.
+	 *
+	 * @param string $class Fully qualified class name.
+	 * @return void
+	 */
+	public static function load( string $class ): void {
+		if ( ! str_starts_with( $class, self::NAMESPACE_PREFIX ) ) {
+			return;
+		}
+
+		$relative = substr( $class, strlen( self::NAMESPACE_PREFIX ) );
+		$path     = PERFORM_PRO_DIR . 'includes/' . str_replace( '\\', '/', $relative ) . '.php';
+
+		if ( is_readable( $path ) ) {
+			require_once $path;
+		}
+	}
+}
