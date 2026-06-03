@@ -40,6 +40,13 @@ final class Dispatcher {
 	 */
 	private const BATCH_SIZE = 25;
 
+	/**
+	 * Wall-clock budget per cron tick (seconds). A full batch of slow
+	 * endpoints could otherwise approach BATCH_SIZE × the HTTP timeout and
+	 * trip max_execution_time; we yield well before that.
+	 */
+	private const MAX_RUN_SECONDS = 20;
+
 	private Repository $webhooks;
 	private DeliveryRepository $deliveries;
 	private Deliverer $deliverer;
@@ -101,7 +108,15 @@ final class Dispatcher {
 	public function dispatch_due_deliveries(): void {
 		$due = $this->deliveries->find_due( self::BATCH_SIZE );
 
+		// Wall-clock budget — yield before a batch of slow endpoints can trip
+		// max_execution_time. Unprocessed rows are picked up on the next tick.
+		$started = time();
+
 		foreach ( $due as $delivery ) {
+			if ( time() - $started >= self::MAX_RUN_SECONDS ) {
+				break;
+			}
+
 			$id = (int) $delivery['id'];
 
 			if ( ! $this->deliveries->claim( $id ) ) {
