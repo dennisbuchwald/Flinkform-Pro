@@ -12,9 +12,11 @@
 import { addFilter } from '@wordpress/hooks';
 
 import IntegrationsPanel from './integrations-panel';
+import SpamPanel from './spam-panel';
+import CustomCssPanel from './custom-css-panel';
 
 /**
- * Append the Pro Integrations (webhooks) panel to the form-container inspector.
+ * Append Pro inspector panels to the form-container inspector.
  *
  * @param {Array}  panels Panels collected so far (React elements).
  * @param {Object} props  Editing context: { attributes, setAttributes, clientId, formId, formFields }.
@@ -22,9 +24,20 @@ import IntegrationsPanel from './integrations-panel';
  */
 addFilter(
 	'perform.formContainer.inspectorPanels',
-	'perform-forms-pro/integrations',
+	'perform-forms-pro/panels',
 	( panels, props ) => [
 		...panels,
+		<SpamPanel
+			key="perform-pro-spam"
+			attributes={ props.attributes }
+			setAttributes={ props.setAttributes }
+		/>,
+		<CustomCssPanel
+			key="perform-pro-custom-css"
+			attributes={ props.attributes }
+			setAttributes={ props.setAttributes }
+			formId={ props.formId }
+		/>,
 		<IntegrationsPanel
 			key="perform-pro-integrations"
 			formId={ props.formId }

@@ -106,6 +106,10 @@ function perform_pro_register_modules(): void {
 	// lifecycle. (The Integrations editor panel was moved in M-c-d-1.)
 	( new \PerFormPro\Webhooks\Module() )->register();
 
+	// Custom CSS: re-adds the per-form CSS feature (attribute + render output).
+	// The editor panel is handled by the JS bundle (custom-css-panel.js).
+	( new \PerFormPro\CustomCss\Module() )->register();
+
 	// GDPR: privacy-policy content (webhooks + SMTP), a delivery-log personal-
 	// data exporter, and the erasure cascade for webhook delivery rows.
 	( new \PerFormPro\Privacy() )->register();
