@@ -36,6 +36,9 @@ delete_option( 'flinkform_smtp_last_test' );
 delete_option( 'flinkform_newsletter_settings' );
 delete_option( 'flinkform_newsletter_last_result' );
 
+// Stripe Payments options (encrypted API keys + settings).
+delete_option( 'flinkform_stripe_settings' );
+
 $admins = get_users( [ 'role' => 'administrator', 'fields' => 'ID' ] );
 foreach ( $admins as $admin_id ) {
 	delete_transient( 'flinkform_smtp_test_result_' . $admin_id );

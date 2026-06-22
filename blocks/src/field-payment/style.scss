@@ -1,0 +1,97 @@
+/**
+ * Payment field styles — frontend + editor.
+ */
+
+.flinkform-field--payment {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+/* Amount display (fixed mode) */
+.flinkform-payment__amount {
+	font-size: 1.5rem;
+	font-weight: 700;
+	color: inherit;
+	padding: 0.5rem 0;
+}
+
+/* Product radio choices */
+.flinkform-payment__products {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.flinkform-payment__product-option {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.75rem 1rem;
+	border: 1.5px solid var(--flinkform-border-color, #ccc);
+	border-radius: var(--flinkform-border-radius, 6px);
+	cursor: pointer;
+	transition: border-color 0.15s ease;
+
+	&:has(.flinkform-payment__product-radio:checked) {
+		border-color: var(--flinkform-primary-color, #7e56ff);
+	}
+}
+
+.flinkform-payment__product-radio {
+	accent-color: var(--flinkform-primary-color, #7e56ff);
+}
+
+.flinkform-payment__product-label {
+	flex: 1;
+	font-weight: 500;
+}
+
+.flinkform-payment__product-price {
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+/* Stripe Card Element wrapper */
+.flinkform-payment__card-wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.flinkform-payment__card-element {
+	padding: 0.75rem 0.85rem;
+	border: 1.5px solid var(--flinkform-border-color, #ccc);
+	border-radius: var(--flinkform-border-radius, 6px);
+	background: #fff;
+	transition: border-color 0.15s ease;
+
+	&:focus-within {
+		border-color: var(--flinkform-primary-color, #7e56ff);
+		outline: 2px solid color-mix(in srgb, var(--flinkform-primary-color, #7e56ff) 25%, transparent);
+		outline-offset: 1px;
+	}
+}
+
+.flinkform-payment__card-errors {
+	color: #b32d2e;
+	font-size: 0.85rem;
+	min-height: 1.2em;
+}
+
+/* Editor preview */
+.flinkform-payment__card-preview {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.85rem 1rem;
+	border: 1.5px dashed #ccc;
+	border-radius: 6px;
+	color: #999;
+	font-size: 0.85rem;
+	background: #fafafa;
+
+	svg {
+		opacity: 0.5;
+	}
+}

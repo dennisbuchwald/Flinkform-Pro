@@ -2,8 +2,8 @@
 /**
  * Plugin Name:       Flinkform Pro
  * Plugin URI:        https://dennisbuchwald.de/apps/flinkform-pro
- * Description:       Pro add-on for Flinkform — webhooks, CSV export, SMTP & (coming) external CAPTCHA and payments. Docks onto the free Flinkform core.
- * Version:           1.0.0
+ * Description:       Pro add-on for Flinkform — Stripe payments, webhooks, CSV export, SMTP, file uploads, newsletter integrations and custom CSS.
+ * Version:           1.1.0
  * Requires at least: 6.5
  * Requires PHP:      8.1
  * Requires Plugins:  flinkform
@@ -23,7 +23,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Plugin constants — single source of truth.
  */
-define( 'FLINKFORM_PRO_VERSION', '1.0.0' );
+define( 'FLINKFORM_PRO_VERSION', '1.1.0' );
 // Minimum free-core version. 1.0.0 is the first stable Flinkform release.
 define( 'FLINKFORM_PRO_MIN_CORE', '1.0.0' );
 define( 'FLINKFORM_PRO_FILE', __FILE__ );
@@ -68,6 +68,7 @@ function flinkform_pro_advertise_features( array $features ): array {
 	$features[] = 'custom_css';         // Per-form custom CSS
 	$features[] = 'file_upload';        // File Upload field block + processing
 	$features[] = 'newsletter';         // Brevo / Mailchimp / CleverReach signups
+	$features[] = 'stripe_payments';    // Stripe payment field + processing
 
 	// NOTE: multi_step and spam_challenge are no longer advertised — both
 	// live in the free core since 0.4.0 (per the published feature matrix).
@@ -120,11 +121,13 @@ function flinkform_pro_register_modules(): void {
 	// the credentials settings page.
 	( new \FlinkformPro\Newsletter\Module() )->register();
 
-	// GDPR: privacy-policy content (webhooks + SMTP), a delivery-log personal-
-	// data exporter, and the erasure cascade for webhook delivery rows.
-	( new \FlinkformPro\Privacy() )->register();
+	// Stripe Payments: payment field block + REST endpoint for PaymentIntents
+	// + server-side verification + admin settings page.
+	( new \FlinkformPro\Payments\Module() )->register();
 
-	// Future modules dock here: external CAPTCHA providers, payments, etc.
+	// GDPR: privacy-policy content (webhooks + SMTP + payments), a delivery-log
+	// personal-data exporter, and the erasure cascade for webhook delivery rows.
+	( new \FlinkformPro\Privacy() )->register();
 }
 add_action( 'flinkform_register_modules', 'flinkform_pro_register_modules' );
 
