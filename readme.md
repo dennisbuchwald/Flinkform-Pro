@@ -5,20 +5,26 @@ form plugin. Separate plugin, **not** distributed via WordPress.org — sold wit
 license key and auto-updated from a dedicated endpoint (licensing integration:
 planned via Freemius, not yet wired).
 
-## Features (v1.0.0)
+## Features (v1.1.0)
 
+- **Stripe Payments** — collect payments directly in forms. Fixed amount or
+  product choices with radio buttons. Stripe Elements card input (PCI-compliant,
+  card data never touches the server), server-side PaymentIntent verification
+  with amount-tampering protection. Admin settings page for API keys (AES-256
+  encrypted). Supports EUR, USD, GBP, CHF.
 - **SMTP delivery** — route all `wp_mail()` through a configured SMTP provider.
   7 provider presets (Gmail, Outlook, SendGrid, Mailgun, Brevo, Postmark,
   Amazon SES), AES-256-encrypted credentials, conflict detection with other
   SMTP plugins, test-email diagnostics.
 - **SMTP send log** — per-mail history (recipient, subject, sent/failed with
   the exact PHPMailer error). GDPR-lean: no mail bodies, configurable
-  retention (default 30 days), covered by the personal-data eraser.
+  retention (default 30 days), covered by the personal-data exporter and eraser.
 - **Webhooks** — per-form webhooks with JSON/form-encoded payloads, custom
   headers, field mapping, conditions, cron-driven dispatch with retries and a
   full delivery log. SSRF-hardened.
 - **CSV export** — export filtered submissions from the admin list.
-- **Custom CSS** — per-form CSS panel in the editor.
+- **Custom CSS** — per-form CSS panel in the editor. Sanitised against XSS
+  (`@import`, `url()`, `expression()`, `-moz-binding`, `</style>` breakout).
 - **File Upload field** — per-field type allow-list (ext+content sniffing),
   size cap, randomised storage in a script-execution-blocked uploads
   subdirectory, automatic file deletion with the submission (GDPR cascade).
@@ -29,7 +35,6 @@ planned via Freemius, not yet wired).
 
 - External CAPTCHA providers (Turnstile, hCaptcha) for operators who want them
 - SMTP OAuth2 (Google Workspace, Microsoft 365)
-- Stripe payments
 - Licensing + update delivery via Freemius
 
 ## Architecture
@@ -43,8 +48,10 @@ only hooks the published, frozen extension points:
 | `flinkform_pro_features` (filter) | Advertises Pro capabilities so the core's `Features` façade flips on |
 | `flinkform_register_modules` (action) | Wires Pro subsystems once the core has booted |
 | `flinkform_block_dirs` (filter) | Registers Pro blocks / field types from this plugin's own build dir |
-| `flinkform_field_blocks` + `flinkform_process_submission` (filters) | Register add-on field types incl. file handling |
+| `flinkform_field_blocks` + `flinkform_process_submission` (filters) | Register add-on field types (file upload, payment) |
 | `flinkform_spam_providers` (filter) | Registers external CAPTCHA providers |
+
+See [SECURITY.md](SECURITY.md) for the full security model and GDPR compliance documentation.
 
 The hard dependency on the free core is enforced two ways:
 1. `Requires Plugins: flinkform` header (WordPress 6.5+).
