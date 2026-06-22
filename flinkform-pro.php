@@ -3,7 +3,7 @@
  * Plugin Name:       Flinkform Pro
  * Plugin URI:        https://dennisbuchwald.de/apps/flinkform-pro
  * Description:       Pro add-on for Flinkform — webhooks, CSV export, SMTP & (coming) external CAPTCHA and payments. Docks onto the free Flinkform core.
- * Version:           0.4.0
+ * Version:           1.0.0
  * Requires at least: 6.5
  * Requires PHP:      8.1
  * Requires Plugins:  flinkform
@@ -23,11 +23,9 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Plugin constants — single source of truth.
  */
-define( 'FLINKFORM_PRO_VERSION', '0.4.0' );
-// Minimum free-core version. 0.4.0 is the Flinkform rename baseline
-// (flinkform_ hook prefix, FLINKFORM_VERSION constant); older cores
-// fire perffo_/perform_ hooks this add-on no longer listens to.
-define( 'FLINKFORM_PRO_MIN_CORE', '0.4.0' );
+define( 'FLINKFORM_PRO_VERSION', '1.0.0' );
+// Minimum free-core version. 1.0.0 is the first stable Flinkform release.
+define( 'FLINKFORM_PRO_MIN_CORE', '1.0.0' );
 define( 'FLINKFORM_PRO_FILE', __FILE__ );
 define( 'FLINKFORM_PRO_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FLINKFORM_PRO_URL', plugin_dir_url( __FILE__ ) );

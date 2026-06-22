@@ -5,7 +5,7 @@ form plugin. Separate plugin, **not** distributed via WordPress.org — sold wit
 license key and auto-updated from a dedicated endpoint (licensing integration:
 planned via Freemius, not yet wired).
 
-## Features (v0.4.0)
+## Features (v1.0.0)
 
 - **SMTP delivery** — route all `wp_mail()` through a configured SMTP provider.
   7 provider presets (Gmail, Outlook, SendGrid, Mailgun, Brevo, Postmark,
@@ -48,7 +48,7 @@ only hooks the published, frozen extension points:
 
 The hard dependency on the free core is enforced two ways:
 1. `Requires Plugins: flinkform` header (WordPress 6.5+).
-2. A runtime version guard (`FLINKFORM_PRO_MIN_CORE`, currently 0.4.0) that
+2. A runtime version guard (`FLINKFORM_PRO_MIN_CORE`, currently 1.0.0) that
    pauses Pro and shows an admin notice if the core is missing or too old to
    expose the bridge.
 
