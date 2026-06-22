@@ -70,6 +70,50 @@ final class Privacy {
 	}
 
 	/**
+	 * Export mail-log rows addressed to the data subject (Art. 15 DSGVO).
+	 *
+	 * @param string $email_address The email to search for.
+	 * @param int    $page          Page number (1-based).
+	 * @return array{data: array<int, array<string, mixed>>, done: bool}
+	 */
+	public function export_mail_log_data( string $email_address, int $page = 1 ): array {
+		$rows = \FlinkformPro\Smtp\MailLog::find_for_email( $email_address, $page );
+		$export_data = [];
+
+		foreach ( $rows as $row ) {
+			$export_data[] = [
+				'group_id'          => 'flinkform-pro-mail-log',
+				'group_label'       => __( 'Flinkform Pro — Mail Log', 'flinkform-pro' ),
+				'group_description' => __( 'Records of outgoing emails sent through the SMTP feature.', 'flinkform-pro' ),
+				'item_id'           => 'flinkform-mail-log-' . (int) ( $row['id'] ?? 0 ),
+				'data'              => [
+					[
+						'name'  => __( 'Recipient', 'flinkform-pro' ),
+						'value' => (string) ( $row['recipients'] ?? '' ),
+					],
+					[
+						'name'  => __( 'Subject', 'flinkform-pro' ),
+						'value' => (string) ( $row['subject'] ?? '' ),
+					],
+					[
+						'name'  => __( 'Status', 'flinkform-pro' ),
+						'value' => (string) ( $row['status'] ?? '' ),
+					],
+					[
+						'name'  => __( 'Sent at', 'flinkform-pro' ),
+						'value' => (string) ( $row['created_at'] ?? '' ),
+					],
+				],
+			];
+		}
+
+		return [
+			'data' => $export_data,
+			'done' => count( $rows ) < 50,
+		];
+	}
+
+	/**
 	 * Erase mail-log rows addressed to the data subject.
 	 *
 	 * @param string $email_address The email to erase.
@@ -120,6 +164,11 @@ final class Privacy {
 		$exporters['flinkform-pro-webhooks'] = [
 			'exporter_friendly_name' => __( 'Flinkform Pro — Webhook Deliveries', 'flinkform-pro' ),
 			'callback'               => [ $this, 'export_delivery_data' ],
+		];
+
+		$exporters['flinkform-pro-mail-log'] = [
+			'exporter_friendly_name' => __( 'Flinkform Pro — Mail Log', 'flinkform-pro' ),
+			'callback'               => [ $this, 'export_mail_log_data' ],
 		];
 
 		return $exporters;

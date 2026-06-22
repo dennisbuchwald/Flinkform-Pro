@@ -96,6 +96,12 @@ final class Module {
 		$css = (string) preg_replace( '/expression\s*\(/i', '', $css );
 		$css = (string) preg_replace( '/behavior\s*:/i', '', $css );
 		$css = (string) preg_replace( '/javascript\s*:/i', '', $css );
+		$css = (string) preg_replace( '/@import\b/i', '', $css );
+		$css = (string) preg_replace( '/url\s*\(/i', '', $css );
+		$css = (string) preg_replace( '/-moz-binding/i', '', $css );
+		// Prevent </style> breakout and HTML comment injection.
+		$css = str_replace( '</', '', $css );
+		$css = str_replace( '<!--', '', $css );
 		return trim( $css );
 	}
 }

@@ -155,6 +155,13 @@ final class Module {
 			return $result;
 		}
 
+		// Verify the paid amount matches the configured price (anti-tampering).
+		$expected = $this->resolve_expected_amount( $payment_field, $result['clean'] );
+		if ( $expected > 0 && (int) ( $verify['amount'] ?? 0 ) !== $expected ) {
+			$result['errors'][ $field_name ] = __( 'Payment amount mismatch. Please try again.', 'flinkform-pro' );
+			return $result;
+		}
+
 		return $result;
 	}
 
@@ -178,5 +185,47 @@ final class Module {
 
 		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion -- External Stripe.js, version is managed by Stripe.
 		wp_enqueue_script( 'stripe-js', 'https://js.stripe.com/v3/', [], null, false );
+	}
+
+	/**
+	 * Resolve the expected payment amount from the field definition.
+	 *
+	 * For fixed-price fields, returns the configured amount. For product-
+	 * choice fields, looks up which product the visitor selected and
+	 * returns that amount. Returns 0 if the amount cannot be determined
+	 * (caller should skip the amount check in that case).
+	 *
+	 * @param array<string, mixed> $field Payment field definition.
+	 * @param array<string, mixed> $clean Sanitised submission values.
+	 * @return int Amount in smallest currency unit (cents).
+	 */
+	private function resolve_expected_amount( array $field, array $clean ): int {
+		$mode = (string) ( $field['priceMode'] ?? 'fixed' );
+
+		if ( 'fixed' === $mode ) {
+			return (int) ( $field['amount'] ?? 0 );
+		}
+
+		// Product mode: the selected amount is posted as a separate field.
+		$field_name     = (string) ( $field['name'] ?? '' );
+		$selected_raw   = '';
+
+		// The product radio posts into flinkform_payment_product[fieldName].
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce is verified in the core handler.
+		if ( isset( $_POST['flinkform_payment_product'][ $field_name ] ) ) {
+			$selected_raw = sanitize_text_field( wp_unslash( (string) $_POST['flinkform_payment_product'][ $field_name ] ) );
+		}
+
+		$selected_amount = (int) $selected_raw;
+		$products        = isset( $field['products'] ) && is_array( $field['products'] ) ? $field['products'] : [];
+
+		// Validate the selected amount is actually one of the configured products.
+		foreach ( $products as $product ) {
+			if ( (int) ( $product['amount'] ?? 0 ) === $selected_amount ) {
+				return $selected_amount;
+			}
+		}
+
+		return 0; // Unknown product, caller skips amount check.
 	}
 }

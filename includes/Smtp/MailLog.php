@@ -191,6 +191,49 @@ final class MailLog {
 	 * @param string $email
 	 * @return int Number of rows removed.
 	 */
+	/**
+	 * Find mail-log rows addressed to a specific email (Art. 15 export).
+	 *
+	 * @param string $email E-mail address to search for.
+	 * @param int    $page  Page number (1-based).
+	 * @return array<int, array<string, mixed>>
+	 */
+	public static function find_for_email( string $email, int $page = 1 ): array {
+		global $wpdb;
+
+		$email = sanitize_email( $email );
+		if ( '' === $email ) {
+			return [];
+		}
+
+		$table    = Schema::mail_log_table_name();
+		$per_page = 50;
+		$offset   = max( 0, ( $page - 1 ) * $per_page );
+
+		$like     = $wpdb->esc_like( $email );
+		$sep      = ', ';
+		$as_only  = $email;
+		$as_first = $like . $wpdb->esc_like( $sep ) . '%';
+		$as_last  = '%' . $wpdb->esc_like( $sep ) . $like;
+		$as_mid   = '%' . $wpdb->esc_like( $sep ) . $like . $wpdb->esc_like( $sep ) . '%';
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT id, recipients, subject, status, created_at FROM {$table} WHERE recipients = %s OR recipients LIKE %s OR recipients LIKE %s OR recipients LIKE %s ORDER BY id DESC LIMIT %d OFFSET %d",
+				$as_only,
+				$as_first,
+				$as_last,
+				$as_mid,
+				$per_page,
+				$offset
+			),
+			ARRAY_A
+		);
+
+		return is_array( $rows ) ? $rows : [];
+	}
+
 	public static function erase_for_email( string $email ): int {
 		global $wpdb;
 
