@@ -1,0 +1,77 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "flinkform/field-payment",
+  "version": "1.1.0",
+  "title": "Payment Field",
+  "category": "flinkform",
+  "icon": "money-alt",
+  "description": "Collect payments via Stripe directly in your form (Pro).",
+  "keywords": [
+    "payment",
+    "stripe",
+    "zahlung",
+    "bezahlung"
+  ],
+  "textdomain": "flinkform-pro",
+  "parent": [
+    "flinkform/form"
+  ],
+  "supports": {
+    "html": false,
+    "reusable": false
+  },
+  "attributes": {
+    "label": {
+      "type": "string",
+      "default": "Payment"
+    },
+    "fieldName": {
+      "type": "string",
+      "default": ""
+    },
+    "fullWidth": {
+      "type": "boolean",
+      "default": true
+    },
+    "conditionalLogic": {
+      "type": "object",
+      "default": {}
+    },
+    "priceMode": {
+      "type": "string",
+      "default": "fixed",
+      "enum": [
+        "fixed",
+        "products"
+      ]
+    },
+    "amount": {
+      "type": "number",
+      "default": 0
+    },
+    "currency": {
+      "type": "string",
+      "default": ""
+    },
+    "description": {
+      "type": "string",
+      "default": ""
+    },
+    "products": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "usesContext": [
+    "flinkform/formId",
+    "flinkform/appearance"
+  ],
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php",
+  "viewScript": "file:./view.js",
+  "style": "file:./style-index.css"
+}
