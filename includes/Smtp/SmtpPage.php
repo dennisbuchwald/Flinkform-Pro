@@ -374,17 +374,26 @@ final class SmtpPage {
 	private function handle_test_send(): void {
 		check_admin_referer( self::TEST_NONCE_ACTION );
 
-		$user = wp_get_current_user();
-		if ( ! $user || ! is_email( (string) $user->user_email ) ) {
-			$this->finish_test_send( [
-				'success'   => false,
-				'recipient' => '',
-				'error'     => __( 'Could not determine a recipient — your WordPress user has no email address on file.', 'flinkform-pro' ),
-			] );
-			return;
-		}
+		// Allow a custom recipient; fall back to the current user's email.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified above.
+		$custom = isset( $_POST['flinkform_smtp_test_recipient'] )
+			? sanitize_email( wp_unslash( $_POST['flinkform_smtp_test_recipient'] ) )
+			: '';
 
-		$recipient = (string) $user->user_email;
+		if ( '' !== $custom && is_email( $custom ) ) {
+			$recipient = $custom;
+		} else {
+			$user = wp_get_current_user();
+			if ( ! $user || ! is_email( (string) $user->user_email ) ) {
+				$this->finish_test_send( [
+					'success'   => false,
+					'recipient' => '',
+					'error'     => __( 'Could not determine a recipient. Enter a valid email address or make sure your WordPress profile has one.', 'flinkform-pro' ),
+				] );
+				return;
+			}
+			$recipient = (string) $user->user_email;
+		}
 		$subject   = __( 'Flinkform SMTP test email', 'flinkform-pro' );
 		$body      = sprintf(
 			/* translators: 1: site name, 2: ISO timestamp */
@@ -1024,23 +1033,24 @@ final class SmtpPage {
 			<?php wp_nonce_field( self::TEST_NONCE_ACTION ); ?>
 			<input type="hidden" name="flinkform_smtp_action" value="send_test" />
 
-			<button type="submit" class="button button-secondary">
+			<label for="flinkform-smtp-test-recipient" class="flinkform-smtp__test-label">
+				<?php esc_html_e( 'Recipient', 'flinkform-pro' ); ?>
+			</label>
+			<input
+				type="email"
+				id="flinkform-smtp-test-recipient"
+				name="flinkform_smtp_test_recipient"
+				value="<?php echo esc_attr( $recipient ); ?>"
+				class="regular-text"
+				placeholder="<?php echo esc_attr( $recipient ); ?>"
+			/>
+			<p class="description">
+				<?php esc_html_e( 'Pre-filled with your WordPress profile email. Change it to send the test elsewhere.', 'flinkform-pro' ); ?>
+			</p>
+
+			<button type="submit" class="button button-secondary" style="margin-top: 8px;">
 				<?php esc_html_e( 'Send test email', 'flinkform-pro' ); ?>
 			</button>
-
-			<?php if ( '' !== $recipient ) : ?>
-				<span class="flinkform-smtp__test-recipient">
-					<?php
-					echo esc_html(
-						sprintf(
-							/* translators: %s: recipient email address */
-							__( 'Recipient: %s (your WordPress profile email).', 'flinkform-pro' ),
-							$recipient
-						)
-					);
-					?>
-				</span>
-			<?php endif; ?>
 
 			<?php if ( ! $status['effective'] ) : ?>
 				<p class="flinkform-smtp__test-warning description">
