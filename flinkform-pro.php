@@ -3,7 +3,7 @@
  * Plugin Name:       Flinkform Pro
  * Plugin URI:        https://dennisbuchwald.de/apps/flinkform-pro
  * Description:       Pro add-on for Flinkform — Stripe payments, webhooks, CSV export, SMTP, file uploads, newsletter integrations and custom CSS.
- * Version:           1.1.0
+ * Version:           1.1.1
  * Requires at least: 6.5
  * Requires PHP:      8.1
  * Requires Plugins:  flinkform
@@ -23,7 +23,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Plugin constants — single source of truth.
  */
-define( 'FLINKFORM_PRO_VERSION', '1.1.0' );
+define( 'FLINKFORM_PRO_VERSION', '1.1.1' );
 // Minimum free-core version. 1.0.0 is the first stable Flinkform release.
 define( 'FLINKFORM_PRO_MIN_CORE', '1.0.0' );
 define( 'FLINKFORM_PRO_FILE', __FILE__ );

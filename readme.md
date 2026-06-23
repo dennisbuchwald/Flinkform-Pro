@@ -5,7 +5,7 @@ form plugin. Separate plugin, **not** distributed via WordPress.org — sold wit
 license key and auto-updated from a dedicated endpoint (licensing integration:
 planned via Freemius, not yet wired).
 
-## Features (v1.1.0)
+## Features (v1.1.1)
 
 - **Stripe Payments** — collect payments directly in forms. Fixed amount or
   product choices with radio buttons. Stripe Elements card input (PCI-compliant,
@@ -15,7 +15,7 @@ planned via Freemius, not yet wired).
 - **SMTP delivery** — route all `wp_mail()` through a configured SMTP provider.
   7 provider presets (Gmail, Outlook, SendGrid, Mailgun, Brevo, Postmark,
   Amazon SES), AES-256-encrypted credentials, conflict detection with other
-  SMTP plugins, test-email diagnostics.
+  SMTP plugins, test-email diagnostics with custom recipient.
 - **SMTP send log** — per-mail history (recipient, subject, sent/failed with
   the exact PHPMailer error). GDPR-lean: no mail bodies, configurable
   retention (default 30 days), covered by the personal-data exporter and eraser.
