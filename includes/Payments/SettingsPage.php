@@ -30,7 +30,7 @@ final class SettingsPage {
 	 * @return void
 	 */
 	public function register(): void {
-		add_action( 'admin_menu', [ $this, 'add_submenu_page' ], 30 );
+		add_action( 'admin_menu', [ $this, 'add_submenu_page' ], 20 );
 		add_action( 'admin_init', [ $this, 'save_settings' ] );
 	}
 
@@ -45,10 +45,10 @@ final class SettingsPage {
 		}
 
 		add_submenu_page(
-			'flinkform',
+			\Flinkform\Admin\Menu::PARENT_SLUG,
 			__( 'Stripe Payments', 'flinkform-pro' ),
 			__( 'Stripe Payments', 'flinkform-pro' ),
-			'manage_options',
+			\Flinkform\Admin\Menu::CAPABILITY,
 			'flinkform-stripe',
 			[ $this, 'render_page' ]
 		);
