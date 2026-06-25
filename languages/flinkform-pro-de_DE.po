@@ -1,0 +1,1608 @@
+# Copyright (C) 2026 Dennis Buchwald
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Flinkform Pro 1.1.1\n"
+"Report-Msgid-Bugs-To: https://dennisbuchwald.de/apps/flinkform-pro\n"
+"PO-Revision-Date: 2026-06-25 00:00+0000\n"
+"Last-Translator: Dennis Buchwald <dennis@dbw-media.de>\n"
+"Language-Team: German <de@li.org>\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Domain: flinkform-pro\n"
+"X-Generator: Manual\n"
+
+#. Plugin Name of the plugin
+#: flinkform-pro.php
+msgid "Flinkform Pro"
+msgstr ""
+
+#. Description of the plugin
+#: flinkform-pro.php
+msgid ""
+"Pro add-on for Flinkform — Stripe payments, webhooks, CSV export, SMTP, file "
+"uploads, newsletter integrations and custom CSS."
+msgstr ""
+"Pro-Erweiterung für Flinkform - Stripe-Zahlungen, Webhooks, CSV-Export, "
+"SMTP, Datei-Uploads, Newsletter-Integrationen und Custom CSS."
+
+#: flinkform-pro.php:176
+#, php-format
+msgid ""
+"<strong>Flinkform Pro</strong> needs the free <strong>Flinkform</strong> "
+"plugin (version %s or newer) to be active. Pro features are paused until the "
+"core is available."
+msgstr ""
+"<strong>Flinkform Pro</strong> benötigt das kostenlose <strong>Flinkform</"
+"strong>-Plugin (Version %s oder neuer). Pro-Funktionen sind pausiert, bis "
+"das Basis-Plugin verfügbar ist."
+
+# --- Spam Panel (src/spam-panel.js) ---
+#: src/spam-panel.js
+msgid "Spam Protection"
+msgstr "Spam-Schutz"
+
+#: src/spam-panel.js
+msgid "Strategy"
+msgstr "Strategie"
+
+#: src/spam-panel.js
+msgid "Auto — built-in challenge (recommended)"
+msgstr "Automatisch - integrierte Challenge (empfohlen)"
+
+#: src/spam-panel.js
+msgid "Built-in challenge (force on)"
+msgstr "Integrierte Challenge (erzwungen)"
+
+#: src/spam-panel.js
+msgid "None — honeypot + time-check only"
+msgstr "Keine - nur Honeypot + Zeitprüfung"
+
+#: src/spam-panel.js
+msgid ""
+"The built-in challenge runs a tiny proof-of-work in the visitor's browser "
+"(transparent, ~50–500 ms) plus a math fallback for visitors without "
+"JavaScript. No external services, no cookies."
+msgstr ""
+"Die integrierte Challenge führt einen kleinen Proof-of-Work im Browser des "
+"Besuchers aus (unsichtbar, ca. 50-500 ms) plus eine Mathe-Aufgabe als "
+"Fallback für Besucher ohne JavaScript. Keine externen Dienste, keine Cookies."
+
+#: src/spam-panel.js
+msgid ""
+"Honeypot + time-check still apply, but the active challenge is off. Use only "
+"for trusted-context forms (logged-in users, internal tools)."
+msgstr ""
+"Honeypot + Zeitprüfung bleiben aktiv, aber die aktive Challenge ist "
+"deaktiviert. Nur für Formulare in vertrauenswürdigen Kontexten verwenden "
+"(eingeloggte Benutzer, interne Tools)."
+
+# --- Custom CSS Panel (src/custom-css-panel.js) ---
+#: src/custom-css-panel.js
+msgid "Custom CSS"
+msgstr "Eigenes CSS"
+
+#: src/custom-css-panel.js
+msgid "CSS rules"
+msgstr "CSS-Regeln"
+
+#: src/custom-css-panel.js
+msgid ""
+"Scope rules to this form by prefixing selectors with [data-flinkform-"
+"id=\"<id>\"]. Otherwise the rules apply to every form on the page."
+msgstr ""
+"Regeln auf dieses Formular beschränken, indem Sie Selektoren mit [data-"
+"flinkform-id=\"<id>\"] voranstellen. Andernfalls gelten die Regeln für jedes "
+"Formular auf der Seite."
+
+#: src/custom-css-panel.js
+msgid "Form ID for scoping:"
+msgstr "Formular-ID zum Einschränken:"
+
+# --- Integrations Panel (src/integrations-panel.js) ---
+#: src/integrations-panel.js
+msgid "Integrations"
+msgstr "Integrationen"
+
+#: src/integrations-panel.js
+msgid "Could not load webhooks."
+msgstr "Webhooks konnten nicht geladen werden."
+
+#: src/integrations-panel.js
+msgid "Could not create webhook."
+msgstr "Webhook konnte nicht erstellt werden."
+
+#: src/integrations-panel.js
+msgid "Could not update webhook."
+msgstr "Webhook konnte nicht aktualisiert werden."
+
+#: src/integrations-panel.js
+msgid "Delete this webhook? Its delivery log will also be removed."
+msgstr ""
+"Diesen Webhook löschen? Das Zustellungsprotokoll wird ebenfalls entfernt."
+
+#: src/integrations-panel.js
+msgid "Could not delete webhook."
+msgstr "Webhook konnte nicht gelöscht werden."
+
+#: src/integrations-panel.js
+msgid ""
+"No webhooks yet. Add one to send submissions to an external URL (Zapier, "
+"n8n, Make, your own API)."
+msgstr ""
+"Noch keine Webhooks vorhanden. Fügen Sie einen hinzu, um Einsendungen an "
+"eine externe URL zu senden (Zapier, n8n, Make, Ihre eigene API)."
+
+#: src/integrations-panel.js
+msgid "Add webhook"
+msgstr "Webhook hinzufügen"
+
+#: src/integrations-panel.js
+msgid "Untitled webhook"
+msgstr "Unbenannter Webhook"
+
+#: src/integrations-panel.js
+msgid "Label"
+msgstr "Bezeichnung"
+
+#: src/integrations-panel.js
+msgid "Optional. Used in the webhook log to identify this destination."
+msgstr ""
+"Optional. Wird im Webhook-Protokoll zur Identifizierung dieses Ziels "
+"verwendet."
+
+#: src/integrations-panel.js
+msgid "URL"
+msgstr "URL"
+
+#: src/integrations-panel.js
+msgid "Method"
+msgstr "Methode"
+
+#: src/integrations-panel.js
+msgid "Payload format"
+msgstr "Payload-Format"
+
+#: src/integrations-panel.js
+msgid "JSON"
+msgstr "JSON"
+
+#: src/integrations-panel.js
+msgid "Form-encoded"
+msgstr "Formular-kodiert"
+
+#: src/integrations-panel.js
+msgid "Active"
+msgstr "Aktiv"
+
+#: src/integrations-panel.js
+msgid "Disable to stop deliveries without losing the configuration."
+msgstr ""
+"Deaktivieren, um Zustellungen zu stoppen, ohne die Konfiguration zu "
+"verlieren."
+
+#: src/integrations-panel.js
+msgid "Sending test…"
+msgstr "Test wird gesendet…"
+
+#: src/integrations-panel.js
+msgid "Send test"
+msgstr "Test senden"
+
+#: src/integrations-panel.js
+msgid "Delete this webhook"
+msgstr "Diesen Webhook löschen"
+
+#: src/integrations-panel.js
+msgid "Test request failed."
+msgstr "Testanfrage fehlgeschlagen."
+
+#: src/integrations-panel.js
+msgid "no response"
+msgstr "keine Antwort"
+
+#. translators: %s: HTTP status code
+#: src/integrations-panel.js
+msgid "✓ HTTP %s"
+msgstr "✓ HTTP %s"
+
+#. translators: %s: HTTP status code or "no response"
+#: src/integrations-panel.js
+msgid "✕ HTTP %s"
+msgstr "✕ HTTP %s"
+
+#: src/integrations-panel.js
+msgid "Headers"
+msgstr "Headers"
+
+#: src/integrations-panel.js
+msgid "No custom headers."
+msgstr "Keine eigenen Headers."
+
+#: src/integrations-panel.js
+msgid "Header name"
+msgstr "Header-Name"
+
+#: src/integrations-panel.js
+msgid "Value"
+msgstr "Wert"
+
+#: src/integrations-panel.js
+msgid "Header value"
+msgstr "Header-Wert"
+
+#: src/integrations-panel.js
+msgid "Remove header"
+msgstr "Header entfernen"
+
+#: src/integrations-panel.js
+msgid "+ Add header"
+msgstr "+ Header hinzufügen"
+
+#: src/integrations-panel.js
+msgid "— Select operator —"
+msgstr "- Operator auswählen -"
+
+#: src/integrations-panel.js
+msgid "equals"
+msgstr "ist gleich"
+
+#: src/integrations-panel.js
+msgid "does not equal"
+msgstr "ist nicht gleich"
+
+#: src/integrations-panel.js
+msgid "contains"
+msgstr "enthält"
+
+#: src/integrations-panel.js
+msgid "does not contain"
+msgstr "enthält nicht"
+
+#: src/integrations-panel.js
+msgid "is empty"
+msgstr "ist leer"
+
+#: src/integrations-panel.js
+msgid "is not empty"
+msgstr "ist nicht leer"
+
+#: src/integrations-panel.js
+msgid "— Select a field —"
+msgstr "- Feld auswählen -"
+
+#: src/integrations-panel.js
+msgid "Conditional delivery"
+msgstr "Bedingte Zustellung"
+
+#: src/integrations-panel.js
+msgid "Only send this webhook when the submission matches the rule below."
+msgstr ""
+"Diesen Webhook nur senden, wenn die Einsendung der untenstehenden Regel "
+"entspricht."
+
+#: src/integrations-panel.js
+msgid "Add at least one field block to this form to use conditional delivery."
+msgstr ""
+"Fügen Sie dem Formular mindestens einen Feldblock hinzu, um die bedingte "
+"Zustellung zu nutzen."
+
+#: src/integrations-panel.js
+msgid "Field"
+msgstr "Feld"
+
+#: src/integrations-panel.js
+msgid "Operator"
+msgstr "Operator"
+
+#: src/integrations-panel.js
+msgid "Comparison is case-insensitive for contains / not contains."
+msgstr ""
+"Der Vergleich ignoriert die Groß-/Kleinschreibung bei enthält / enthält "
+"nicht."
+
+#: src/integrations-panel.js
+msgid "Rename fields in payload"
+msgstr "Felder im Payload umbenennen"
+
+#: src/integrations-panel.js
+msgid ""
+"Send fields under different keys than their internal names. Leave a target "
+"empty to pass that field through unchanged."
+msgstr ""
+"Felder unter anderen Schlüsseln als ihren internen Namen senden. Ziel leer "
+"lassen, um das Feld unverändert zu übergeben."
+
+#. translators: %s: source field name.
+#: src/integrations-panel.js
+msgid "Payload key for field \"%s\""
+msgstr "Payload-Schlüssel für Feld \"%s\""
+
+# --- Newsletter Panel (src/newsletter-panel.js) ---
+#: src/newsletter-panel.js
+msgid "Newsletter"
+msgstr "Newsletter"
+
+#: src/newsletter-panel.js
+msgid "Subscribe to a newsletter list"
+msgstr "In eine Newsletter-Liste eintragen"
+
+#: src/newsletter-panel.js
+msgid "Provider"
+msgstr "Anbieter"
+
+#: src/newsletter-panel.js
+msgid "API credentials are configured under Flinkform → Newsletter."
+msgstr "Die API-Zugangsdaten werden unter Flinkform > Newsletter konfiguriert."
+
+#: src/newsletter-panel.js
+msgid "List ID (number)"
+msgstr "Listen-ID (Zahl)"
+
+#: src/newsletter-panel.js
+msgid "Audience ID"
+msgstr "Audience-ID"
+
+#: src/newsletter-panel.js
+msgid "Group ID"
+msgstr "Gruppen-ID"
+
+#: src/newsletter-panel.js
+msgid "List ID"
+msgstr "Listen-ID"
+
+#: src/newsletter-panel.js
+msgid "Email field"
+msgstr "E-Mail-Feld"
+
+#: src/newsletter-panel.js
+msgid "— Select the email field —"
+msgstr "- E-Mail-Feld auswählen -"
+
+#: src/newsletter-panel.js
+msgid "Consent field (required)"
+msgstr "Einwilligungsfeld (Pflicht)"
+
+#: src/newsletter-panel.js
+msgid "— Select the consent field —"
+msgstr "- Einwilligungsfeld auswählen -"
+
+#: src/newsletter-panel.js
+msgid ""
+"Visitors are only subscribed when they tick this field. Without a mapping, "
+"nothing is ever sent — GDPR-safe by design."
+msgstr ""
+"Besucher werden nur eingetragen, wenn sie dieses Feld anhaken. Ohne "
+"Zuordnung wird nichts gesendet - DSGVO-konform von Haus aus."
+
+#: src/newsletter-panel.js
+msgid ""
+"No consent field mapped — signups are disabled. Add a Toggle or Consent "
+"field (e.g. \"Subscribe me to the newsletter\") and select it above."
+msgstr ""
+"Kein Einwilligungsfeld zugeordnet - Anmeldungen sind deaktiviert. Fügen Sie "
+"ein Toggle- oder Einwilligungsfeld hinzu (z. B. \"Mich zum Newsletter "
+"anmelden\") und wählen Sie es oben aus."
+
+#: src/newsletter-panel.js
+msgid "First name field (optional)"
+msgstr "Vornamefeld (optional)"
+
+#: src/newsletter-panel.js
+msgid "Last name field (optional)"
+msgstr "Nachnamefeld (optional)"
+
+#: src/newsletter-panel.js
+msgid "— None —"
+msgstr "- Keines -"
+
+#: src/newsletter-panel.js
+msgid "Double opt-in"
+msgstr "Double-Opt-in"
+
+#: src/newsletter-panel.js
+msgid ""
+"Sends the activation email of the DOI form configured under Flinkform → "
+"Newsletter."
+msgstr ""
+"Sendet die Aktivierungs-E-Mail des DOI-Formulars, das unter Flinkform > "
+"Newsletter konfiguriert ist."
+
+#: src/newsletter-panel.js
+msgid ""
+"New contacts are created as \"pending\" and Mailchimp sends its confirmation "
+"email."
+msgstr ""
+"Neue Kontakte werden als \"ausstehend\" erstellt und Mailchimp sendet seine "
+"Bestätigungs-E-Mail."
+
+#: src/newsletter-panel.js
+msgid ""
+"For Brevo, configure double opt-in inside Brevo (automation on list entry)."
+msgstr ""
+"Für Brevo konfigurieren Sie das Double-Opt-in direkt in Brevo (Automation "
+"bei Listeneintrag)."
+
+# --- File Upload Block (blocks/src/field-file/) ---
+#: blocks/src/field-file/block.json
+msgctxt "block title"
+msgid "File Upload Field"
+msgstr "Datei-Upload-Feld"
+
+#: blocks/src/field-file/block.json
+msgctxt "block description"
+msgid "Let visitors attach a file to their submission (Pro)."
+msgstr "Ermöglicht Besuchern, eine Datei an ihre Einsendung anzuhängen (Pro)."
+
+#: blocks/src/field-file/edit.js
+msgid "Field Settings"
+msgstr "Feldeinstellungen"
+
+#: blocks/src/field-file/edit.js
+msgid "Required"
+msgstr "Pflichtfeld"
+
+#: blocks/src/field-file/edit.js
+msgid "Help Text"
+msgstr "Hilfetext"
+
+#: blocks/src/field-file/edit.js
+msgid "Field Name"
+msgstr "Feldname"
+
+#: blocks/src/field-file/edit.js
+msgid "Key used in submission data. Auto-generated; change with care."
+msgstr ""
+"Schlüssel in den Einsendungsdaten. Wird automatisch generiert - nur mit "
+"Bedacht ändern."
+
+#: blocks/src/field-file/edit.js
+msgid "Allowed Files"
+msgstr "Erlaubte Dateien"
+
+#: blocks/src/field-file/edit.js
+msgid ""
+"Select at least one file type — with none selected, every upload is rejected."
+msgstr ""
+"Wählen Sie mindestens einen Dateityp aus - ohne Auswahl wird jeder Upload "
+"abgelehnt."
+
+#: blocks/src/field-file/edit.js
+msgid "Maximum size (MB)"
+msgstr "Maximale Größe (MB)"
+
+#: blocks/src/field-file/edit.js
+msgid "Attach file to notification email"
+msgstr "Datei an Benachrichtigungs-E-Mail anhängen"
+
+#: blocks/src/field-file/edit.js
+msgid ""
+"The uploaded file is attached to the admin notification (up to 8 MB; larger "
+"files arrive as a link). Combine with a Data Retention period on the form so "
+"the server copy cleans itself up."
+msgstr ""
+"Die hochgeladene Datei wird an die Admin-Benachrichtigung angehängt (bis 8 "
+"MB, größere Dateien kommen als Link). Kombinieren Sie dies mit einer "
+"Datenspeicherungsfrist im Formular, damit die Serverkopie sich automatisch "
+"bereinigt."
+
+#: blocks/src/field-file/edit.js blocks/src/field-file/render.php
+msgid "Choose a file"
+msgstr "Datei auswählen"
+
+#: blocks/src/field-file/edit.js blocks/src/field-file/render.php
+msgid "or drag it here"
+msgstr "oder hierher ziehen"
+
+#: blocks/src/field-file/render.php
+msgid "%s or drag it here"
+msgstr "%s oder hierher ziehen"
+
+#. translators: 1: allowed extensions list, 2: max size in MB
+#: blocks/src/field-file/edit.js blocks/src/field-file/render.php
+#, php-format
+msgid "Allowed: %1$s · max. %2$d MB"
+msgstr "Erlaubt: %1$s · max. %2$d MB"
+
+#: blocks/src/field-file/edit.js
+msgid "No file types allowed yet"
+msgstr "Noch keine Dateitypen erlaubt"
+
+#: blocks/src/field-file/render.php
+msgid "Remove selected file"
+msgstr "Ausgewählte Datei entfernen"
+
+# --- Payment Block (blocks/src/field-payment/) ---
+#: blocks/src/field-payment/block.json
+msgctxt "block title"
+msgid "Payment Field"
+msgstr "Zahlungsfeld"
+
+#: blocks/src/field-payment/block.json
+msgctxt "block description"
+msgid "Collect payments via Stripe directly in your form (Pro)."
+msgstr "Zahlungen direkt im Formular über Stripe einziehen (Pro)."
+
+#: blocks/src/field-payment/edit.js
+msgid "Description"
+msgstr "Beschreibung"
+
+#: blocks/src/field-payment/edit.js
+msgid "Shown on the Stripe receipt."
+msgstr "Wird auf der Stripe-Quittung angezeigt."
+
+#: blocks/src/field-payment/edit.js
+msgid "Pricing"
+msgstr "Preisgestaltung"
+
+#: blocks/src/field-payment/edit.js
+msgid "Price mode"
+msgstr "Preismodus"
+
+#: blocks/src/field-payment/edit.js
+msgid "Fixed amount"
+msgstr "Fester Betrag"
+
+#: blocks/src/field-payment/edit.js
+msgid "Product choices"
+msgstr "Produktauswahl"
+
+#: blocks/src/field-payment/edit.js
+msgid "Currency"
+msgstr "Währung"
+
+#: blocks/src/field-payment/edit.js
+msgid "Leave empty to use the default from Stripe settings."
+msgstr ""
+"Leer lassen, um den Standard aus den Stripe-Einstellungen zu verwenden."
+
+#: blocks/src/field-payment/edit.js
+msgid "Amount (cents)"
+msgstr "Betrag (Cent)"
+
+#: blocks/src/field-payment/edit.js
+msgid "Amount in the smallest currency unit. 4900 = 49,00 EUR."
+msgstr "Betrag in der kleinsten Währungseinheit. 4900 = 49,00 EUR."
+
+#: blocks/src/field-payment/edit.js
+msgid "Cents"
+msgstr "Cent"
+
+#: blocks/src/field-payment/edit.js
+msgid "+ Add product"
+msgstr "+ Produkt hinzufügen"
+
+#: blocks/src/field-payment/edit.js
+msgid "(unnamed)"
+msgstr "(unbenannt)"
+
+#: blocks/src/field-payment/edit.js
+msgid "Set an amount in the sidebar"
+msgstr "Betrag in der Seitenleiste festlegen"
+
+#: blocks/src/field-payment/edit.js
+msgid "Stripe card input appears here"
+msgstr "Stripe-Karteneingabe erscheint hier"
+
+# --- Payments Module (includes/Payments/) ---
+#: includes/Payments/Module.php
+msgid "Payment was not completed. Please try again."
+msgstr "Die Zahlung wurde nicht abgeschlossen. Bitte versuchen Sie es erneut."
+
+#: includes/Payments/Module.php
+msgid "Payment processing is not configured."
+msgstr "Die Zahlungsabwicklung ist nicht konfiguriert."
+
+#: includes/Payments/Module.php
+msgid "Payment verification failed. Please try again."
+msgstr ""
+"Die Zahlungsverifizierung ist fehlgeschlagen. Bitte versuchen Sie es erneut."
+
+#: includes/Payments/Module.php
+msgid "Payment amount mismatch. Please try again."
+msgstr "Zahlungsbetrag stimmt nicht überein. Bitte versuchen Sie es erneut."
+
+#: includes/Payments/SettingsPage.php
+msgid "Stripe Payments"
+msgstr "Stripe-Zahlungen"
+
+#: includes/Payments/SettingsPage.php
+msgid "Stripe settings saved."
+msgstr "Stripe-Einstellungen gespeichert."
+
+#: includes/Payments/SettingsPage.php
+msgid "Mode"
+msgstr "Modus"
+
+#: includes/Payments/SettingsPage.php
+msgid "Test"
+msgstr "Test"
+
+#: includes/Payments/SettingsPage.php
+msgid "Live"
+msgstr "Live"
+
+#: includes/Payments/SettingsPage.php
+msgid "Test mode uses Stripe test keys. No real payments are processed."
+msgstr ""
+"Der Testmodus verwendet Stripe-Testschlüssel. Es werden keine echten "
+"Zahlungen verarbeitet."
+
+#: includes/Payments/SettingsPage.php
+msgid "Publishable Key"
+msgstr "Öffentlicher Schlüssel"
+
+#: includes/Payments/SettingsPage.php
+msgid ""
+"Starts with pk_test_ or pk_live_. Found in the Stripe Dashboard under "
+"Developers > API keys."
+msgstr ""
+"Beginnt mit pk_test_ oder pk_live_. Im Stripe Dashboard unter Entwickler > "
+"API-Schlüssel zu finden."
+
+#: includes/Payments/SettingsPage.php
+msgid "Secret Key"
+msgstr "Geheimer Schlüssel"
+
+#: includes/Payments/SettingsPage.php
+msgid "Saved (leave empty to keep)"
+msgstr "Gespeichert (leer lassen zum Behalten)"
+
+#: includes/Payments/SettingsPage.php
+msgid ""
+"Starts with sk_test_ or sk_live_. Stored AES-256 encrypted. Never committed "
+"to version control."
+msgstr ""
+"Beginnt mit sk_test_ oder sk_live_. AES-256-verschlüsselt gespeichert. Wird "
+"niemals in die Versionskontrolle übernommen."
+
+#: includes/Payments/SettingsPage.php
+msgid "Default Currency"
+msgstr "Standardwährung"
+
+#: includes/Payments/SettingsPage.php
+msgid "Save Stripe Settings"
+msgstr "Stripe-Einstellungen speichern"
+
+# --- SMTP Module (includes/Smtp/) ---
+#: includes/Smtp/Module.php
+msgid "SMTP"
+msgstr "SMTP"
+
+#: includes/Smtp/Transport.php
+msgid "Flinkform SMTP is self-disabled."
+msgstr "Flinkform SMTP hat sich selbst deaktiviert."
+
+#: includes/Smtp/Transport.php
+#, php-format
+msgid ""
+"The plugin \"%s\" is active and already manages SMTP delivery — Flinkform "
+"has disabled its own override to avoid a double configuration. Deactivate "
+"the other SMTP plugin (or disable Flinkform SMTP) to clear this notice."
+msgstr ""
+"Das Plugin \"%s\" ist aktiv und verwaltet bereits den SMTP-Versand. "
+"Flinkform hat seine eigene Konfiguration deaktiviert, um eine doppelte "
+"Konfiguration zu vermeiden. Deaktivieren Sie das andere SMTP-Plugin (oder "
+"Flinkform SMTP), um diesen Hinweis zu entfernen."
+
+#: includes/Smtp/Transport.php
+msgid "No SMTP host set."
+msgstr "Kein SMTP-Host festgelegt."
+
+#: includes/Smtp/Transport.php
+msgid "No SMTP port set."
+msgstr "Kein SMTP-Port festgelegt."
+
+#: includes/Smtp/Transport.php
+msgid "Authentication is on but no username is set."
+msgstr "Authentifizierung ist aktiviert, aber kein Benutzername festgelegt."
+
+#: includes/Smtp/Transport.php
+msgid "Authentication is on but no password is stored."
+msgstr "Authentifizierung ist aktiviert, aber kein Passwort gespeichert."
+
+#: includes/Smtp/Transport.php
+msgid ""
+"Stored password cannot be decrypted — most likely the wp-config.php auth "
+"salt was rotated. Re-enter your password."
+msgstr ""
+"Das gespeicherte Passwort kann nicht entschlüsselt werden - "
+"höchstwahrscheinlich wurde der Auth-Salt in der wp-config.php geändert. "
+"Bitte geben Sie Ihr Passwort erneut ein."
+
+#: includes/Smtp/SmtpPage.php
+msgid "SMTP settings saved."
+msgstr "SMTP-Einstellungen gespeichert."
+
+#: includes/Smtp/SmtpPage.php
+msgid ""
+"Could not determine a recipient. Enter a valid email address or make sure "
+"your WordPress profile has one."
+msgstr ""
+"Konnte keinen Empfänger ermitteln. Geben Sie eine gültige E-Mail-Adresse ein "
+"oder stellen Sie sicher, dass Ihr WordPress-Profil eine enthält."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Flinkform SMTP test email"
+msgstr "Flinkform SMTP Test-E-Mail"
+
+#: includes/Smtp/SmtpPage.php
+#, php-format
+msgid ""
+"This is a test email from Flinkform SMTP on %1$s.\n"
+"\n"
+"If you can read this, your SMTP configuration is working — Flinkform form "
+"submissions will be delivered via this configured server.\n"
+"\n"
+"Timestamp: %2$s\n"
+msgstr ""
+"Dies ist eine Test-E-Mail von Flinkform SMTP auf %1$s.\n"
+"\n"
+"Wenn Sie dies lesen können, funktioniert Ihre SMTP-Konfiguration. Flinkform-"
+"Formulareinsendungen werden über diesen konfigurierten Server zugestellt.\n"
+"\n"
+"Zeitstempel: %2$s\n"
+
+#: includes/Smtp/SmtpPage.php
+msgid ""
+"wp_mail() returned false but no error detail was reported. Check the SMTP "
+"host, port, and credentials."
+msgstr ""
+"wp_mail() gab false zurück, aber es wurde kein Fehlerdetail gemeldet. Prüfen "
+"Sie den SMTP-Host, Port und die Zugangsdaten."
+
+#: includes/Smtp/SmtpPage.php
+msgid "You do not have permission to manage Flinkform SMTP settings."
+msgstr ""
+"Sie haben keine Berechtigung, die Flinkform SMTP-Einstellungen zu verwalten."
+
+#: includes/Smtp/SmtpPage.php
+msgid "SMTP Settings"
+msgstr "SMTP-Einstellungen"
+
+#: includes/Smtp/SmtpPage.php
+msgid ""
+"Configure an SMTP server so Flinkform can deliver admin notifications and "
+"submitter confirmations through your own mail provider instead of the "
+"WordPress default. The status panel below shows whether the configured "
+"override is actually in effect for the next wp_mail() call."
+msgstr ""
+"Konfigurieren Sie einen SMTP-Server, damit Flinkform Admin-"
+"Benachrichtigungen und Einsender-Bestätigungen über Ihren eigenen "
+"Mailanbieter statt über den WordPress-Standard zustellt. Das Statuspanel "
+"unten zeigt, ob die konfigurierte Übersteuerung tatsächlich für den nächsten "
+"wp_mail()-Aufruf in Kraft ist."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Enable Flinkform SMTP"
+msgstr "Flinkform SMTP aktivieren"
+
+#: includes/Smtp/SmtpPage.php
+msgid "Route plugin emails through this SMTP configuration."
+msgstr "Plugin-E-Mails über diese SMTP-Konfiguration leiten."
+
+#: includes/Smtp/SmtpPage.php
+msgid ""
+"When disabled, Flinkform falls back to the default wp_mail() transport (PHP "
+"mail or whatever any other SMTP plugin provides)."
+msgstr ""
+"Wenn deaktiviert, fällt Flinkform auf den Standard-wp_mail()-Transport "
+"zurück (PHP mail oder was ein anderes SMTP-Plugin bereitstellt)."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Provider preset"
+msgstr "Anbieter-Vorlage"
+
+#: includes/Smtp/SmtpPage.php
+msgid "Custom SMTP server"
+msgstr "Eigener SMTP-Server"
+
+#: includes/Smtp/SmtpPage.php
+msgid "Enter the SMTP details supplied by your mail provider."
+msgstr ""
+"Geben Sie die SMTP-Details ein, die Ihnen Ihr Mailanbieter bereitgestellt "
+"hat."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Gmail (App-Password)"
+msgstr "Gmail (App-Passwort)"
+
+#: includes/Smtp/SmtpPage.php
+msgid ""
+"Requires 2-Step-Verification on your Google account. Create an App-Password "
+"at https://myaccount.google.com/apppasswords and use it as the password "
+"below. Workspace admins can disable App-Passwords by policy — in that case "
+"wait for the OAuth2 release in v0.2."
+msgstr ""
+"Erfordert die Bestätigung in zwei Schritten für Ihr Google-Konto. Erstellen "
+"Sie ein App-Passwort unter https://myaccount.google.com/apppasswords und "
+"verwenden Sie es als Passwort unten. Workspace-Admins können App-Passwörter "
+"per Richtlinie deaktivieren - in dem Fall warten Sie auf die OAuth2-Version "
+"in v0.2."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Outlook.com / Hotmail (personal)"
+msgstr "Outlook.com / Hotmail (privat)"
+
+#: includes/Smtp/SmtpPage.php
+msgid ""
+"Personal Outlook.com / Hotmail accounts only. Microsoft 365 (business) "
+"accounts require OAuth2 — coming in Flinkform v0.2."
+msgstr ""
+"Nur für private Outlook.com / Hotmail-Konten. Microsoft 365 (geschäftlich) "
+"erfordert OAuth2 - kommt in Flinkform v0.2."
+
+#: includes/Smtp/SmtpPage.php
+msgid "SendGrid"
+msgstr "SendGrid"
+
+#: includes/Smtp/SmtpPage.php
+msgid ""
+"Username is literally \"apikey\" (lowercase). Password is your SendGrid API "
+"key."
+msgstr ""
+"Der Benutzername ist buchstäblich \"apikey\" (kleingeschrieben). Das "
+"Passwort ist Ihr SendGrid-API-Schlüssel."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Mailgun"
+msgstr "Mailgun"
+
+#: includes/Smtp/SmtpPage.php
+msgid ""
+"Find your SMTP credentials in Mailgun under Sending > Domain Settings > SMTP "
+"credentials. EU customers: change the host to smtp.eu.mailgun.org."
+msgstr ""
+"Finden Sie Ihre SMTP-Zugangsdaten in Mailgun unter Sending > Domain Settings "
+"> SMTP credentials. EU-Kunden: Ändern Sie den Host auf smtp.eu.mailgun.org."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Brevo (formerly Sendinblue)"
+msgstr "Brevo (ehemals Sendinblue)"
+
+#: includes/Smtp/SmtpPage.php
+msgid ""
+"SMTP credentials are at Brevo > SMTP & API > SMTP. The username is your "
+"Brevo account email."
+msgstr ""
+"SMTP-Zugangsdaten finden Sie unter Brevo > SMTP & API > SMTP. Der "
+"Benutzername ist Ihre Brevo-Konto-E-Mail-Adresse."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Postmark"
+msgstr "Postmark"
+
+#: includes/Smtp/SmtpPage.php
+msgid ""
+"Username and password are both your Postmark Server API token (the same "
+"string)."
+msgstr ""
+"Benutzername und Passwort sind beide Ihr Postmark-Server-API-Token (dieselbe "
+"Zeichenkette)."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Amazon SES"
+msgstr "Amazon SES"
+
+#: includes/Smtp/SmtpPage.php
+msgid ""
+"Replace \"us-east-1\" in the host with your SES region. Username and "
+"password are SMTP-specific credentials (created under IAM > SMTP settings), "
+"NOT your normal AWS access key."
+msgstr ""
+"Ersetzen Sie \"us-east-1\" im Host durch Ihre SES-Region. Benutzername und "
+"Passwort sind SMTP-spezifische Zugangsdaten (erstellt unter IAM > SMTP-"
+"Einstellungen), NICHT Ihr normaler AWS-Zugriffsschlüssel."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Microsoft 365 — requires OAuth2 (coming in v0.2)"
+msgstr "Microsoft 365 - erfordert OAuth2 (kommt in v0.2)"
+
+#: includes/Smtp/SmtpPage.php
+msgid ""
+"Microsoft disabled basic SMTP authentication for Microsoft 365 tenants. "
+"OAuth2 support is scheduled for Flinkform v0.2."
+msgstr ""
+"Microsoft hat die einfache SMTP-Authentifizierung für Microsoft 365 "
+"deaktiviert. OAuth2-Unterstützung ist für Flinkform v0.2 geplant."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Google Workspace — use App-Password preset or wait for OAuth2 (v0.2)"
+msgstr ""
+"Google Workspace - App-Passwort-Vorlage verwenden oder auf OAuth2 warten "
+"(v0.2)"
+
+#: includes/Smtp/SmtpPage.php
+msgid ""
+"Google Workspace accounts can use the Gmail preset above if your admin "
+"allows App-Passwords. Otherwise wait for the OAuth2 release in Flinkform "
+"v0.2."
+msgstr ""
+"Google Workspace-Konten können die Gmail-Vorlage oben verwenden, wenn Ihr "
+"Admin App-Passwörter erlaubt. Andernfalls warten Sie auf die OAuth2-Version "
+"in Flinkform v0.2."
+
+#: includes/Smtp/SmtpPage.php
+msgid "SMTP host"
+msgstr "SMTP-Host"
+
+#: includes/Smtp/SmtpPage.php
+msgid "Port"
+msgstr "Port"
+
+#: includes/Smtp/SmtpPage.php
+msgid "Common values: 587 (STARTTLS), 465 (SSL), 25 (none / legacy)."
+msgstr "Übliche Werte: 587 (STARTTLS), 465 (SSL), 25 (keine / legacy)."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Encryption"
+msgstr "Verschlüsselung"
+
+#: includes/Smtp/SmtpPage.php
+msgid "TLS (STARTTLS)"
+msgstr "TLS (STARTTLS)"
+
+#: includes/Smtp/SmtpPage.php
+msgid "SSL"
+msgstr "SSL"
+
+#: includes/Smtp/SmtpPage.php
+msgid "None (not recommended)"
+msgstr "Keine (nicht empfohlen)"
+
+#: includes/Smtp/SmtpPage.php
+msgid "Authentication"
+msgstr "Authentifizierung"
+
+#: includes/Smtp/SmtpPage.php
+msgid "My SMTP server requires authentication (almost always yes)."
+msgstr "Mein SMTP-Server erfordert Authentifizierung (fast immer ja)."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Username"
+msgstr "Benutzername"
+
+#: includes/Smtp/SmtpPage.php
+msgid "Password"
+msgstr "Passwort"
+
+#: includes/Smtp/SmtpPage.php
+msgid "•••••••• (leave empty to keep current)"
+msgstr "•••••••• (leer lassen zum Behalten)"
+
+#: includes/Smtp/SmtpPage.php
+msgid "Enter your SMTP password or API key"
+msgstr "SMTP-Passwort oder API-Schlüssel eingeben"
+
+#: includes/Smtp/SmtpPage.php
+msgid ""
+"Stored encrypted (AES-256-CBC, key derived from wp_salt). The plaintext "
+"password is never sent back to your browser — leave this field empty to keep "
+"the existing value when re-saving."
+msgstr ""
+"Verschlüsselt gespeichert (AES-256-CBC, Schlüssel aus wp_salt abgeleitet). "
+"Das Klartext-Passwort wird nie an Ihren Browser zurückgesendet - lassen Sie "
+"dieses Feld leer, um den bestehenden Wert beim erneuten Speichern "
+"beizubehalten."
+
+#: includes/Smtp/SmtpPage.php
+msgid "From email"
+msgstr "Absender-E-Mail"
+
+#: includes/Smtp/SmtpPage.php
+msgid ""
+"Overrides the WordPress default From-address for plugin emails. Leave empty "
+"to keep wp_mail's default."
+msgstr ""
+"Überschreibt die WordPress-Standard-Absenderadresse für Plugin-E-Mails. Leer "
+"lassen, um den Standard von wp_mail beizubehalten."
+
+#: includes/Smtp/SmtpPage.php
+msgid "From name"
+msgstr "Absendername"
+
+#: includes/Smtp/SmtpPage.php
+msgid "Send log"
+msgstr "Sendeprotokoll"
+
+#: includes/Smtp/SmtpPage.php
+msgid "Keep a send history (recipient, subject, result — never the mail body)"
+msgstr ""
+"Sendeverlauf aufbewahren (Empfänger, Betreff, Ergebnis - nie den E-Mail-"
+"Inhalt)"
+
+#: includes/Smtp/SmtpPage.php
+msgid ""
+"Shows whether each notification actually left the server, with the exact "
+"error when it did not. Note: because SMTP routes all of the site's email, "
+"the log records every outgoing message (including mail from other plugins), "
+"not just Flinkform notifications."
+msgstr ""
+"Zeigt, ob jede Benachrichtigung den Server tatsächlich verlassen hat, mit "
+"dem genauen Fehler, wenn nicht. Hinweis: Da SMTP alle E-Mails der Website "
+"leitet, protokolliert das Log jede ausgehende Nachricht (auch von anderen "
+"Plugins), nicht nur Flinkform-Benachrichtigungen."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Log retention (days)"
+msgstr "Protokoll-Aufbewahrung (Tage)"
+
+#: includes/Smtp/SmtpPage.php
+msgid "Older entries are deleted automatically (data minimisation)."
+msgstr "Ältere Einträge werden automatisch gelöscht (Datenminimierung)."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Save SMTP settings"
+msgstr "SMTP-Einstellungen speichern"
+
+#: includes/Smtp/SmtpPage.php
+msgid "Send Log"
+msgstr "Sendeprotokoll"
+
+#: includes/Smtp/SmtpPage.php
+msgid ""
+"No emails logged yet. Entries appear here as soon as WordPress sends mail."
+msgstr ""
+"Noch keine E-Mails protokolliert. Einträge erscheinen hier, sobald WordPress "
+"E-Mails versendet."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Time (UTC)"
+msgstr "Zeit (UTC)"
+
+#: includes/Smtp/SmtpPage.php
+msgid "Status"
+msgstr "Status"
+
+#: includes/Smtp/SmtpPage.php
+msgid "Recipient"
+msgstr "Empfänger"
+
+#: includes/Smtp/SmtpPage.php
+msgid "Subject"
+msgstr "Betreff"
+
+#: includes/Smtp/SmtpPage.php
+msgid "Error"
+msgstr "Fehler"
+
+#: includes/Smtp/SmtpPage.php
+msgid "Failed"
+msgstr "Fehlgeschlagen"
+
+#: includes/Smtp/SmtpPage.php
+msgid "Sent"
+msgstr "Gesendet"
+
+#: includes/Smtp/SmtpPage.php
+msgid "SMTP Status"
+msgstr "SMTP-Status"
+
+#: includes/Smtp/SmtpPage.php
+msgid "Transport module"
+msgstr "Transportmodul"
+
+#: includes/Smtp/SmtpPage.php
+msgid "Missing"
+msgstr "Fehlt"
+
+#: includes/Smtp/SmtpPage.php
+msgid ""
+"The FlinkformPro\\Smtp\\Transport class could not be loaded. Reinstall "
+"Flinkform Pro to fix this."
+msgstr ""
+"Die Klasse FlinkformPro\\Smtp\\Transport konnte nicht geladen werden. "
+"Installieren Sie Flinkform Pro erneut, um dies zu beheben."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Loaded"
+msgstr "Geladen"
+
+#: includes/Smtp/SmtpPage.php
+msgid "FlinkformPro\\Smtp\\Transport is active on this request."
+msgstr "FlinkformPro\\Smtp\\Transport ist bei dieser Anfrage aktiv."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Master toggle"
+msgstr "Hauptschalter"
+
+#: includes/Smtp/SmtpPage.php
+msgid "Enabled"
+msgstr "Aktiviert"
+
+#: includes/Smtp/SmtpPage.php
+msgid "\"Enable Flinkform SMTP\" is on."
+msgstr "\"Flinkform SMTP aktivieren\" ist eingeschaltet."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Disabled"
+msgstr "Deaktiviert"
+
+#: includes/Smtp/SmtpPage.php
+msgid ""
+"\"Enable Flinkform SMTP\" is off — wp_mail() falls back to the WordPress "
+"default transport."
+msgstr ""
+"\"Flinkform SMTP aktivieren\" ist ausgeschaltet - wp_mail() fällt auf den "
+"WordPress-Standard-Transport zurück."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Configuration"
+msgstr "Konfiguration"
+
+#: includes/Smtp/SmtpPage.php
+msgid "Complete"
+msgstr "Vollständig"
+
+#: includes/Smtp/SmtpPage.php
+#, php-format
+msgid "%1$s:%2$d (%3$s)"
+msgstr "%1$s:%2$d (%3$s)"
+
+#: includes/Smtp/SmtpPage.php
+msgid "Incomplete"
+msgstr "Unvollständig"
+
+#: includes/Smtp/SmtpPage.php
+msgid "Plugin conflict"
+msgstr "Plugin-Konflikt"
+
+#: includes/Smtp/SmtpPage.php
+msgid "None"
+msgstr "Keiner"
+
+#: includes/Smtp/SmtpPage.php
+msgid ""
+"No competing SMTP plugin detected (WP Mail SMTP / FluentSMTP / Easy WP "
+"SMTP / Post SMTP)."
+msgstr ""
+"Kein konkurrierendes SMTP-Plugin erkannt (WP Mail SMTP / FluentSMTP / Easy "
+"WP SMTP / Post SMTP)."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Detected"
+msgstr "Erkannt"
+
+#: includes/Smtp/SmtpPage.php
+#, php-format
+msgid ""
+"\"%s\" is active — Flinkform SMTP self-disabled to avoid a double "
+"configuration. Deactivate the other plugin to let Flinkform SMTP take over."
+msgstr ""
+"\"%s\" ist aktiv - Flinkform SMTP hat sich selbst deaktiviert, um eine "
+"doppelte Konfiguration zu vermeiden. Deaktivieren Sie das andere Plugin, "
+"damit Flinkform SMTP übernehmen kann."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Effective"
+msgstr "Effektiv"
+
+#: includes/Smtp/SmtpPage.php
+msgid "The next wp_mail() call WILL route through this SMTP configuration."
+msgstr ""
+"Der nächste wp_mail()-Aufruf WIRD über diese SMTP-Konfiguration geleitet."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Inactive"
+msgstr "Inaktiv"
+
+#: includes/Smtp/SmtpPage.php
+msgid ""
+"wp_mail() will use the WordPress default transport (not your configured "
+"SMTP)."
+msgstr ""
+"wp_mail() wird den WordPress-Standard-Transport verwenden (nicht Ihr "
+"konfiguriertes SMTP)."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Resolve the rows marked above to fix this."
+msgstr "Lösen Sie die oben markierten Zeilen, um dies zu beheben."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Last test"
+msgstr "Letzter Test"
+
+#: includes/Smtp/SmtpPage.php
+msgid "Never"
+msgstr "Nie"
+
+#: includes/Smtp/SmtpPage.php
+msgid ""
+"No test email has been sent yet. Use the button below to verify your "
+"configuration end-to-end."
+msgstr ""
+"Es wurde noch keine Test-E-Mail gesendet. Verwenden Sie den Button unten, um "
+"Ihre Konfiguration durchgehend zu überprüfen."
+
+#: includes/Smtp/SmtpPage.php
+msgid "OK"
+msgstr "OK"
+
+#: includes/Smtp/SmtpPage.php
+#, php-format
+msgid "Sent to %1$s, %2$s ago."
+msgstr "Gesendet an %1$s, vor %2$s."
+
+#: includes/Smtp/SmtpPage.php
+#, php-format
+msgid "Failed %s ago."
+msgstr "Fehlgeschlagen vor %s."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Test email sent."
+msgstr "Test-E-Mail gesendet."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Test email failed."
+msgstr "Test-E-Mail fehlgeschlagen."
+
+#: includes/Smtp/SmtpPage.php
+#, php-format
+msgid ""
+"Delivered to %s via the configured SMTP path. Check your inbox (or "
+"Mailtrap / sandbox inbox if that's where this server delivers)."
+msgstr ""
+"Zugestellt an %s über den konfigurierten SMTP-Pfad. Prüfen Sie Ihren "
+"Posteingang (oder den Mailtrap-/Sandbox-Posteingang, falls der Server "
+"dorthin zustellt)."
+
+#: includes/Smtp/SmtpPage.php
+#, php-format
+msgid "wp_mail() returned false when attempting to deliver to %s."
+msgstr "wp_mail() gab false zurück beim Versuch, an %s zuzustellen."
+
+#: includes/Smtp/SmtpPage.php
+msgid "Send test email"
+msgstr "Test-E-Mail senden"
+
+#: includes/Smtp/SmtpPage.php
+msgid ""
+"Pre-filled with your WordPress profile email. Change it to send the test "
+"elsewhere."
+msgstr ""
+"Vorausgefüllt mit Ihrer WordPress-Profil-E-Mail. Ändern Sie sie, um den Test "
+"an eine andere Adresse zu senden."
+
+#: includes/Smtp/SmtpPage.php
+msgid ""
+"SMTP override is currently inactive (see status panel above). The test will "
+"fall through to the WordPress default transport — useful to verify your "
+"fallback path, but it does NOT confirm your SMTP credentials work."
+msgstr ""
+"Die SMTP-Übersteuerung ist derzeit inaktiv (siehe Statuspanel oben). Der "
+"Test wird auf den WordPress-Standard-Transport durchfallen - nützlich, um "
+"Ihren Fallback-Pfad zu überprüfen, aber es bestätigt NICHT, dass Ihre SMTP-"
+"Zugangsdaten funktionieren."
+
+# --- Export (includes/Export/) ---
+#: includes/Export/ExportController.php
+msgid "Export CSV"
+msgstr "CSV exportieren"
+
+# --- Newsletter Module (includes/Newsletter/) ---
+#: includes/Newsletter/Module.php
+msgid "Newsletter settings saved."
+msgstr "Newsletter-Einstellungen gespeichert."
+
+#: includes/Newsletter/Module.php
+msgid "Saved — enter a new value to replace"
+msgstr "Gespeichert - neuen Wert eingeben zum Ersetzen"
+
+#: includes/Newsletter/Module.php
+msgid "Newsletter Integrations"
+msgstr "Newsletter-Integrationen"
+
+#: includes/Newsletter/Module.php
+msgid ""
+"Connect your newsletter provider(s) here, then enable the signup per form in "
+"the editor (Form block → Newsletter panel). A signup is only ever sent when "
+"the visitor ticked the consent field you map there."
+msgstr ""
+"Verbinden Sie hier Ihren Newsletter-Anbieter, dann aktivieren Sie die "
+"Anmeldung pro Formular im Editor (Formular-Block > Newsletter-Panel). Eine "
+"Anmeldung wird nur gesendet, wenn der Besucher das zugeordnete "
+"Einwilligungsfeld angehakt hat."
+
+#: includes/Newsletter/Module.php
+msgid "API key"
+msgstr "API-Schlüssel"
+
+#: includes/Newsletter/Module.php
+msgid "Brevo > Settings > SMTP & API > API keys (v3)."
+msgstr "Brevo > Einstellungen > SMTP & API > API-Schlüssel (v3)."
+
+#: includes/Newsletter/Module.php
+msgid ""
+"Mailchimp > Account > Extras > API keys. Includes the datacenter suffix (...-"
+"us21)."
+msgstr ""
+"Mailchimp > Konto > Extras > API-Schlüssel. Enthält das Rechenzentrum-Suffix "
+"(...-us21)."
+
+#: includes/Newsletter/Module.php
+msgid "OAuth Client ID"
+msgstr "OAuth Client-ID"
+
+#: includes/Newsletter/Module.php
+msgid "OAuth Client Secret"
+msgstr "OAuth Client-Secret"
+
+#: includes/Newsletter/Module.php
+msgid "CleverReach > My Account > Extras > REST API > OAuth2 app."
+msgstr "CleverReach > Mein Konto > Extras > REST API > OAuth2-App."
+
+#: includes/Newsletter/Module.php
+msgid "DOI form ID (optional)"
+msgstr "DOI-Formular-ID (optional)"
+
+#: includes/Newsletter/Module.php
+msgid ""
+"Required for double opt-in: the CleverReach form whose activation email is "
+"sent to new subscribers."
+msgstr ""
+"Erforderlich für Double-Opt-in: das CleverReach-Formular, dessen "
+"Aktivierungs-E-Mail an neue Abonnenten gesendet wird."
+
+#: includes/Newsletter/Module.php
+msgid "Save newsletter settings"
+msgstr "Newsletter-Einstellungen speichern"
+
+#: includes/Newsletter/Module.php
+msgid "Last dispatch per provider"
+msgstr "Letzter Versand pro Anbieter"
+
+#: includes/Newsletter/Module.php
+msgid "Result"
+msgstr "Ergebnis"
+
+# --- Uploads (includes/Uploads/) ---
+#: includes/Uploads/Uploader.php
+#, php-format
+msgid "%s could not be uploaded. Please try again."
+msgstr "%s konnte nicht hochgeladen werden. Bitte versuchen Sie es erneut."
+
+#: includes/Uploads/Uploader.php
+#, php-format
+msgid "%1$s exceeds the maximum file size of %2$d MB."
+msgstr "%1$s überschreitet die maximale Dateigröße von %2$d MB."
+
+#: includes/Uploads/Uploader.php
+#, php-format
+msgid "%s does not accept any file type."
+msgstr "%s akzeptiert keinen Dateityp."
+
+#: includes/Uploads/Uploader.php
+#, php-format
+msgid "%s must be one of the allowed file types."
+msgstr "%s muss einem der erlaubten Dateitypen entsprechen."
+
+#: includes/Uploads/Uploader.php
+#, php-format
+msgid "%s could not be stored on the server."
+msgstr "%s konnte nicht auf dem Server gespeichert werden."
+
+# --- Webhooks (includes/Webhooks/) ---
+#: includes/Webhooks/Module.php
+msgid "Webhook Log"
+msgstr "Webhook-Protokoll"
+
+#: includes/Webhooks/WebhookLogPage.php
+msgid ""
+"Every outbound webhook delivery dispatched by Flinkform — one row per "
+"attempt. Use it to debug receivers, audit retries and verify the queue is "
+"draining."
+msgstr ""
+"Jede ausgehende Webhook-Zustellung von Flinkform - eine Zeile pro Versuch. "
+"Nutzen Sie es, um Empfänger zu debuggen, Wiederholungsversuche zu prüfen und "
+"zu überprüfen, ob die Warteschlange abgearbeitet wird."
+
+#: includes/Webhooks/WebhookLogPage.php
+msgid "Search webhooks"
+msgstr "Webhooks suchen"
+
+#: includes/Webhooks/WebhookLogListTable.php
+msgid "ID"
+msgstr "ID"
+
+#: includes/Webhooks/WebhookLogListTable.php
+msgid "Webhook"
+msgstr "Webhook"
+
+#: includes/Webhooks/WebhookLogListTable.php
+msgid "Submission"
+msgstr "Einsendung"
+
+#: includes/Webhooks/WebhookLogListTable.php
+msgid "Code"
+msgstr "Code"
+
+#: includes/Webhooks/WebhookLogListTable.php
+msgid "Attempt"
+msgstr "Versuch"
+
+#: includes/Webhooks/WebhookLogListTable.php
+msgid "Created"
+msgstr "Erstellt"
+
+#: includes/Webhooks/WebhookLogListTable.php
+msgid "Updated"
+msgstr "Aktualisiert"
+
+#: includes/Webhooks/WebhookLogListTable.php
+msgid "No webhook deliveries yet."
+msgstr "Noch keine Webhook-Zustellungen vorhanden."
+
+#: includes/Webhooks/WebhookLogListTable.php
+msgid "(deleted)"
+msgstr "(gelöscht)"
+
+#: includes/Webhooks/WebhookLogListTable.php
+msgid "All statuses"
+msgstr "Alle Status"
+
+#: includes/Webhooks/WebhookLogListTable.php
+msgid "Pending"
+msgstr "Ausstehend"
+
+#: includes/Webhooks/WebhookLogListTable.php
+msgid "Processing"
+msgstr "In Bearbeitung"
+
+#: includes/Webhooks/WebhookLogListTable.php
+msgid "Retrying"
+msgstr "Wiederholung"
+
+#: includes/Webhooks/WebhookLogListTable.php
+msgid "Success"
+msgstr "Erfolgreich"
+
+#: includes/Webhooks/WebhookLogListTable.php
+msgid "Filter"
+msgstr "Filtern"
+
+#: includes/Webhooks/SubmissionDetail.php
+msgid "Webhook Deliveries"
+msgstr "Webhook-Zustellungen"
+
+#: includes/Webhooks/SubmissionDetail.php
+msgid "Actions"
+msgstr "Aktionen"
+
+#: includes/Webhooks/SubmissionDetail.php
+msgid "Resend"
+msgstr "Erneut senden"
+
+#: includes/Webhooks/SubmissionDetail.php
+msgid "Response body"
+msgstr "Antworttext"
+
+#: includes/Webhooks/SubmissionDetail.php
+msgid "Could not resend — delivery not found."
+msgstr "Konnte nicht erneut senden - Zustellung nicht gefunden."
+
+#: includes/Webhooks/SubmissionDetail.php
+msgid "Could not resend — queue insert failed."
+msgstr "Konnte nicht erneut senden - Warteschlange-Einfügung fehlgeschlagen."
+
+#: includes/Webhooks/SubmissionDetail.php
+msgid "Webhook delivery re-queued."
+msgstr "Webhook-Zustellung erneut in die Warteschlange gestellt."
+
+#: includes/Webhooks/RestController.php
+msgid "Webhook not found."
+msgstr "Webhook nicht gefunden."
+
+#: includes/Webhooks/RestController.php
+msgid "A form id is required."
+msgstr "Eine Formular-ID ist erforderlich."
+
+#: includes/Webhooks/RestController.php
+msgid "A webhook URL is required."
+msgstr "Eine Webhook-URL ist erforderlich."
+
+# --- Privacy (includes/Privacy.php) ---
+#: includes/Privacy.php
+msgid "Flinkform Pro — Mail Log"
+msgstr "Flinkform Pro - E-Mail-Protokoll"
+
+#: includes/Privacy.php
+msgid "Records of outgoing emails sent through the SMTP feature."
+msgstr ""
+"Aufzeichnungen ausgehender E-Mails, die über die SMTP-Funktion gesendet "
+"wurden."
+
+#: includes/Privacy.php
+msgid "Sent at"
+msgstr "Gesendet am"
+
+#: includes/Privacy.php
+msgid "Flinkform Pro — Integrations"
+msgstr "Flinkform Pro - Integrationen"
+
+#: includes/Privacy.php
+msgid ""
+"When the SMTP feature is enabled, notification emails generated by your "
+"forms (which may contain submitted data) are routed through the SMTP "
+"provider the administrator has configured, instead of the web server's "
+"default mail transport."
+msgstr ""
+"Wenn die SMTP-Funktion aktiviert ist, werden Benachrichtigungs-E-Mails Ihrer "
+"Formulare (die eingereichte Daten enthalten können) über den vom "
+"Administrator konfigurierten SMTP-Anbieter geleitet, anstatt über den "
+"Standard-Mailversand des Webservers."
+
+#: includes/Privacy.php
+msgid ""
+"Webhook delivery-log entries tied to a submission are removed automatically "
+"when that submission is deleted or erased through a data-subject request."
+msgstr ""
+"Webhook-Zustellungsprotokoll-Einträge, die mit einer Einsendung verknüpft "
+"sind, werden automatisch entfernt, wenn diese Einsendung gelöscht oder durch "
+"eine Betroffenenanfrage gelöscht wird."
+
+#: includes/Privacy.php
+msgid ""
+"When a form contains a File Upload field, files visitors attach are stored "
+"in this website's uploads directory under randomised names. An uploaded file "
+"is deleted automatically when the submission it belongs to is deleted — "
+"whether manually, through the per-form retention period, or through a data-"
+"subject erasure request."
+msgstr ""
+"Wenn ein Formular ein Datei-Upload-Feld enthält, werden die von Besuchern "
+"angehängten Dateien im Upload-Verzeichnis dieser Website unter zufälligen "
+"Namen gespeichert. Eine hochgeladene Datei wird automatisch gelöscht, wenn "
+"die zugehörige Einsendung gelöscht wird - ob manuell, über die "
+"formularbezogene Aufbewahrungsfrist oder über eine Betroffenen-Löschanfrage."
+
+#: includes/Privacy.php
+msgid ""
+"When a form has a newsletter integration enabled, the email address (and, if "
+"mapped, the name) is transmitted to the configured newsletter provider "
+"(Brevo, Mailchimp or CleverReach) — but only when the visitor has actively "
+"ticked the consent field on the form. Those providers may process the data "
+"outside the European Union; their own privacy policies apply."
+msgstr ""
+"Wenn ein Formular eine Newsletter-Integration aktiviert hat, wird die E-Mail-"
+"Adresse (und falls zugeordnet, der Name) an den konfigurierten Newsletter-"
+"Anbieter (Brevo, Mailchimp oder CleverReach) übermittelt - jedoch nur, wenn "
+"der Besucher das Einwilligungsfeld im Formular aktiv angehakt hat. Diese "
+"Anbieter verarbeiten die Daten möglicherweise außerhalb der Europäischen "
+"Union; deren eigene Datenschutzrichtlinien gelten."
+
+#: includes/Privacy.php
+msgid ""
+"When a form contains a payment field, payment is processed through Stripe. "
+"The card details are handled entirely by Stripe's secure infrastructure and "
+"never touch this website's server. Only the Stripe PaymentIntent ID is "
+"stored with the submission for reconciliation purposes."
+msgstr ""
+"Wenn ein Formular ein Zahlungsfeld enthält, wird die Zahlung über Stripe "
+"abgewickelt. Die Kartendaten werden vollständig von Stripes sicherer "
+"Infrastruktur verarbeitet und berühren nie den Server dieser Website. Nur "
+"die Stripe PaymentIntent-ID wird mit der Einsendung zu Abgleichzwecken "
+"gespeichert."
+
+#: includes/Privacy.php
+msgid "Flinkform Pro — Webhook Deliveries"
+msgstr "Flinkform Pro - Webhook-Zustellungen"
+
+#: includes/Privacy.php
+msgid "Records of form submissions dispatched to external webhook endpoints."
+msgstr ""
+"Aufzeichnungen von Formulareinsendungen, die an externe Webhook-Endpunkte "
+"gesendet wurden."
+
+#: includes/Privacy.php
+msgid "Destination URL"
+msgstr "Ziel-URL"
+
+#: includes/Privacy.php
+msgid "Response code"
+msgstr "Antwortcode"
+
+#: includes/Privacy.php
+msgid "Dispatched at"
+msgstr "Versendet am"
