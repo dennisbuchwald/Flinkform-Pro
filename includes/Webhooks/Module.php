@@ -31,6 +31,16 @@ defined( 'ABSPATH' ) || exit;
 final class Module {
 
 	/**
+	 * Cron hook that prunes the delivery log daily.
+	 */
+	public const PRUNE_CRON_HOOK = 'flinkform_prune_webhook_deliveries';
+
+	/**
+	 * Default retention window for the delivery log, in days.
+	 */
+	private const DEFAULT_RETENTION_DAYS = 90;
+
+	/**
 	 * Register everything.
 	 *
 	 * @return void
@@ -56,10 +66,33 @@ final class Module {
 			wp_schedule_event( time() + 60, Dispatcher::CRON_SCHEDULE, Dispatcher::CRON_HOOK );
 		}
 
+		// Daily delivery-log pruning. Self-heals on the file-only update path
+		// the same way the dispatcher schedule does.
+		add_action( self::PRUNE_CRON_HOOK, [ $this, 'prune_delivery_log' ] );
+		if ( ! wp_next_scheduled( self::PRUNE_CRON_HOOK ) ) {
+			wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', self::PRUNE_CRON_HOOK );
+		}
+
 		// Admin: Webhook Log submenu (read-only) + the deliveries section on
 		// the submission detail screen + the Resend handler.
 		add_action( 'admin_menu', [ $this, 'register_log_page' ], 20 );
 		( new SubmissionDetail() )->register();
+	}
+
+	/**
+	 * Daily cron callback: prune delivery-log rows past the retention window.
+	 *
+	 * @return void
+	 */
+	public function prune_delivery_log(): void {
+		/**
+		 * Filter the webhook delivery-log retention window (in days).
+		 *
+		 * @param int $days Retention window. Default 90.
+		 */
+		$days = (int) apply_filters( 'flinkform_webhook_log_retention_days', self::DEFAULT_RETENTION_DAYS );
+
+		( new DeliveryRepository() )->prune_expired( $days );
 	}
 
 	/**

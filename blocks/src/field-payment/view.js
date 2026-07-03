@@ -1,18 +1,24 @@
 /**
  * Payment field — frontend Stripe integration.
  *
- * Loads Stripe.js (enqueued by the PHP module), mounts a Card Element,
- * and intercepts the form submit to process the payment before the
- * form data is POSTed to the server.
+ * Loads Stripe.js (enqueued by the PHP module), mounts a Payment Element,
+ * and intercepts the form submit to process the payment before the form
+ * data is POSTed to the server.
  *
- * Flow:
- *   1. User fills form + card details
- *   2. User clicks submit
- *   3. This script intercepts the submit event
- *   4. Creates a PaymentIntent via the REST endpoint
- *   5. Confirms the payment with Stripe.js
- *   6. On success, sets the hidden input to the PaymentIntent ID
- *   7. Re-submits the form (server verifies the intent)
+ * Uses Stripe's deferred-intent flow so the Element can render before the
+ * PaymentIntent exists and its amount can follow the visitor's product
+ * choice:
+ *
+ *   1. Mount the Payment Element with the current amount + currency.
+ *   2. On product change, elements.update() keeps the amount in sync.
+ *   3. On submit: elements.submit() validates → create the PaymentIntent
+ *      server-side (amount + currency are bound to the form definition
+ *      there, not trusted from here) → stripe.confirmPayment().
+ *   4. redirect: 'if_required' keeps the confirmation in-page; the server
+ *      restricts the intent to non-redirect methods (cards, Apple Pay,
+ *      Google Pay, Link) for this synchronous flow.
+ *   5. On success, set the hidden input to the PaymentIntent ID and
+ *      re-submit the form (the server verifies the intent).
  */
 ( function () {
 	'use strict';
@@ -27,108 +33,100 @@
 			return;
 		}
 
-		const stripe      = window.Stripe( stripeKey );
-		const elements    = stripe.elements();
-		const cardMount   = field.querySelector( '[data-flinkform-card-element]' );
+		const mount       = field.querySelector( '[data-flinkform-card-element]' );
 		const errorsEl    = field.querySelector( '[data-flinkform-card-errors]' );
 		const intentInput = field.querySelector( '[data-flinkform-payment-intent]' );
 		const form        = field.closest( 'form' );
 
-		if ( ! cardMount || ! intentInput || ! form ) {
+		if ( ! mount || ! intentInput || ! form ) {
 			return;
 		}
 
-		// Mount the Stripe Card Element.
-		const card = elements.create( 'card', {
-			style: {
-				base: {
-					fontSize: '16px',
-					color: '#333',
-					'::placeholder': { color: '#999' },
-				},
-				invalid: { color: '#b32d2e' },
-			},
-			hidePostalCode: true,
-		} );
-		card.mount( cardMount );
+		const stripe   = window.Stripe( stripeKey );
+		const currency = ( field.dataset.currency || 'eur' ).toLowerCase();
 
-		// Show inline card validation errors.
-		card.on( 'change', function ( event ) {
-			if ( errorsEl ) {
-				errorsEl.textContent = event.error ? event.error.message : '';
+		const messages = {
+			invalidAmount: field.dataset.msgInvalidAmount || 'Please choose a payment option.',
+			failed:        field.dataset.msgFailed || 'Payment could not be completed. Please try again.',
+		};
+
+		const currentAmount = function () {
+			const checked = field.querySelector( '.flinkform-payment__product-radio:checked' );
+			if ( checked ) {
+				return parseInt( checked.dataset.amount, 10 ) || 0;
 			}
+			const amountEl = field.querySelector( '[data-amount]' );
+			return amountEl ? parseInt( amountEl.dataset.amount, 10 ) || 0 : 0;
+		};
+
+		// The Element needs a positive amount to mount; clamp for display and
+		// gate the real charge on submit.
+		const elements = stripe.elements( {
+			mode: 'payment',
+			amount: Math.max( currentAmount(), 50 ),
+			currency: currency,
+		} );
+		const paymentElement = elements.create( 'payment', { layout: 'tabs' } );
+		paymentElement.mount( mount );
+
+		// Keep the Element's amount in step with the selected product.
+		field.querySelectorAll( '.flinkform-payment__product-radio' ).forEach( function ( radio ) {
+			radio.addEventListener( 'change', function () {
+				const next = currentAmount();
+				if ( next >= 50 ) {
+					elements.update( { amount: next } );
+				}
+			} );
 		} );
 
-		// Track whether we already processed payment for this submit cycle.
+		// Guard so the second (post-payment) submit passes straight through.
 		let paymentProcessed = false;
 
 		form.addEventListener( 'submit', function ( e ) {
-			// If payment was already confirmed, let the form submit through.
 			if ( paymentProcessed ) {
 				return;
 			}
 
 			e.preventDefault();
 
-			// Determine amount (from product radio or fixed).
-			let amount = 0;
-			const checkedProduct = field.querySelector( '.flinkform-payment__product-radio:checked' );
-			if ( checkedProduct ) {
-				amount = parseInt( checkedProduct.dataset.amount, 10 ) || 0;
-			} else {
-				const amountEl = field.querySelector( '[data-amount]' );
-				amount = amountEl ? parseInt( amountEl.dataset.amount, 10 ) || 0 : 0;
-			}
-
+			const amount = currentAmount();
 			if ( amount < 50 ) {
-				showError( errorsEl, 'Invalid amount.' );
+				showError( errorsEl, messages.invalidAmount );
 				return;
 			}
 
-			// Disable submit button.
 			const submitBtn = form.querySelector( '[type="submit"]' );
-			if ( submitBtn ) {
-				submitBtn.disabled = true;
-				submitBtn.classList.add( 'is-loading' );
-			}
+			setLoading( submitBtn, true );
+			clearError( errorsEl );
 
-			// Step 1: Create PaymentIntent via REST.
-			const restUrl  = field.dataset.restUrl;
-			const nonce    = field.dataset.nonce;
-			const formId   = field.dataset.formId;
-			const currency = field.dataset.currency || 'eur';
-
-			fetch( restUrl, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify( {
-					form_id: formId,
-					amount: amount,
-					currency: currency,
-					nonce: nonce,
-				} ),
-			} )
-				.then( function ( res ) { return res.json(); } )
-				.then( function ( data ) {
-					if ( data.error ) {
-						throw new Error( data.error );
+			// Deferred flow: validate → create intent → confirm.
+			elements.submit()
+				.then( function ( res ) {
+					if ( res.error ) {
+						throw new Error( res.error.message || messages.failed );
 					}
-
-					// Step 2: Confirm the payment with Stripe.js.
-					return stripe.confirmCardPayment( data.client_secret, {
-						payment_method: { card: card },
+					return createIntent( field, amount );
+				} )
+				.then( function ( clientSecret ) {
+					return stripe.confirmPayment( {
+						elements: elements,
+						clientSecret: clientSecret,
+						confirmParams: {
+							// Required by the API; unused because the server
+							// disallows redirect methods for this flow.
+							return_url: window.location.href,
+						},
+						redirect: 'if_required',
 					} );
 				} )
 				.then( function ( result ) {
 					if ( result.error ) {
-						throw new Error( result.error.message );
+						throw new Error( result.error.message || messages.failed );
 					}
-
-					// Step 3: Payment succeeded. Set the intent ID and re-submit.
 					intentInput.value = result.paymentIntent.id;
 					paymentProcessed = true;
 
-					// Use requestSubmit() to re-trigger validation + submit handlers.
+					// Re-trigger native validation + submit handlers.
 					if ( typeof form.requestSubmit === 'function' ) {
 						form.requestSubmit();
 					} else {
@@ -136,13 +134,72 @@
 					}
 				} )
 				.catch( function ( err ) {
-					showError( errorsEl, err.message || 'Payment failed.' );
-					if ( submitBtn ) {
-						submitBtn.disabled = false;
-						submitBtn.classList.remove( 'is-loading' );
-					}
+					showError( errorsEl, err.message || messages.failed );
+					setLoading( submitBtn, false );
 				} );
 		} );
+	}
+
+	/**
+	 * Create the PaymentIntent server-side and return its client_secret.
+	 * The server derives the real amount + currency from the form
+	 * definition; the amount we send is only accepted when it matches a
+	 * configured price.
+	 */
+	function createIntent( field, amount ) {
+		const body = {
+			form_id: field.dataset.formId,
+			post_id: parseInt( field.dataset.postId, 10 ) || 0,
+			amount: amount,
+			nonce: field.dataset.nonce,
+		};
+
+		const email = findEmail( field );
+		if ( email ) {
+			body.email = email;
+		}
+
+		return fetch( field.dataset.restUrl, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify( body ),
+		} )
+			.then( function ( res ) {
+				return res.json();
+			} )
+			.then( function ( data ) {
+				if ( ! data || data.error || ! data.client_secret ) {
+					throw new Error( ( data && data.error ) || 'Payment failed.' );
+				}
+				return data.client_secret;
+			} );
+	}
+
+	/**
+	 * Best-effort lookup of an email value in the same form, for the Stripe
+	 * receipt. Never a security input — the server re-sanitises it.
+	 */
+	function findEmail( field ) {
+		const form = field.closest( 'form' );
+		if ( ! form ) {
+			return '';
+		}
+		const el = form.querySelector( 'input[type="email"]' );
+		return el && el.value ? el.value.trim() : '';
+	}
+
+	function setLoading( btn, on ) {
+		if ( ! btn ) {
+			return;
+		}
+		btn.disabled = on;
+		btn.classList.toggle( 'is-loading', on );
+	}
+
+	function clearError( el ) {
+		if ( el ) {
+			el.textContent = '';
+		}
 	}
 
 	function showError( el, message ) {

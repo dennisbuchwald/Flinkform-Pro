@@ -34,8 +34,9 @@ final class Schema {
 	 *
 	 *   1 — webhooks + webhook_deliveries (adopted from free core schema v2)
 	 *   2 — mail_log (SMTP send history)
+	 *   3 — webhook_deliveries created_at index (enables cheap log pruning)
 	 */
-	public const DB_VERSION = '2';
+	public const DB_VERSION = '3';
 
 	/**
 	 * Option key holding the installed Pro schema version.
@@ -193,7 +194,8 @@ final class Schema {
 			PRIMARY KEY  (id),
 			KEY webhook_id (webhook_id),
 			KEY submission_id (submission_id),
-			KEY status_retry (status, next_retry_at)
+			KEY status_retry (status, next_retry_at),
+			KEY created_at (created_at)
 		) {$charset};";
 
 		dbDelta( $sql );

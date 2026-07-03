@@ -16,6 +16,7 @@ declare( strict_types = 1 );
 namespace FlinkformPro;
 
 use FlinkformPro\Webhooks\Dispatcher;
+use FlinkformPro\Webhooks\Module as WebhooksModule;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -30,8 +31,9 @@ final class Deactivator {
 	 * @return void
 	 */
 	public static function deactivate(): void {
-		// Runtime state only — clear the cron. Re-activation reschedules it.
+		// Runtime state only — clear the crons. Re-activation reschedules them.
 		// The webhook tables are intentionally left intact.
 		wp_clear_scheduled_hook( Dispatcher::CRON_HOOK );
+		wp_clear_scheduled_hook( WebhooksModule::PRUNE_CRON_HOOK );
 	}
 }

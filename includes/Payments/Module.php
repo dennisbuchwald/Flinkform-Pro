@@ -155,9 +155,22 @@ final class Module {
 			return $result;
 		}
 
-		// Verify the paid amount matches the configured price (anti-tampering).
+		// Anti-tampering: the amount that was actually charged must equal the
+		// price the visitor was shown for their selection. resolve_expected_amount
+		// returns null when a product-mode submission carries a selection that
+		// matches no configured product — that is a manipulated request and we
+		// fail closed (reject) rather than skipping the check.
 		$expected = $this->resolve_expected_amount( $payment_field, $result['clean'] );
-		if ( $expected > 0 && (int) ( $verify['amount'] ?? 0 ) !== $expected ) {
+		if ( null === $expected || $expected <= 0 || (int) ( $verify['amount'] ?? 0 ) !== $expected ) {
+			$result['errors'][ $field_name ] = __( 'Payment amount mismatch. Please try again.', 'flinkform-pro' );
+			return $result;
+		}
+
+		// Currency must match too — otherwise a client that forced a weaker
+		// currency (e.g. paying 500 JPY against a 500-cent EUR price) would
+		// pass the integer amount check above.
+		$expected_currency = self::resolve_currency( $payment_field );
+		if ( '' !== $expected_currency && strtolower( (string) ( $verify['currency'] ?? '' ) ) !== $expected_currency ) {
 			$result['errors'][ $field_name ] = __( 'Payment amount mismatch. Please try again.', 'flinkform-pro' );
 			return $result;
 		}
@@ -191,15 +204,16 @@ final class Module {
 	 * Resolve the expected payment amount from the field definition.
 	 *
 	 * For fixed-price fields, returns the configured amount. For product-
-	 * choice fields, looks up which product the visitor selected and
-	 * returns that amount. Returns 0 if the amount cannot be determined
-	 * (caller should skip the amount check in that case).
+	 * choice fields, looks up which product the visitor selected and returns
+	 * that amount. Returns null when the amount cannot be legitimately
+	 * determined (product mode with a selection matching no configured
+	 * product) — callers MUST treat null as "reject", never as "skip".
 	 *
 	 * @param array<string, mixed> $field Payment field definition.
 	 * @param array<string, mixed> $clean Sanitised submission values.
-	 * @return int Amount in smallest currency unit (cents).
+	 * @return int|null Amount in smallest currency unit (cents), or null when invalid.
 	 */
-	private function resolve_expected_amount( array $field, array $clean ): int {
+	private function resolve_expected_amount( array $field, array $clean ): ?int {
 		$mode = (string) ( $field['priceMode'] ?? 'fixed' );
 
 		if ( 'fixed' === $mode ) {
@@ -207,8 +221,8 @@ final class Module {
 		}
 
 		// Product mode: the selected amount is posted as a separate field.
-		$field_name     = (string) ( $field['name'] ?? '' );
-		$selected_raw   = '';
+		$field_name   = (string) ( $field['name'] ?? '' );
+		$selected_raw = '';
 
 		// The product radio posts into flinkform_payment_product[fieldName].
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce is verified in the core handler.
@@ -217,15 +231,63 @@ final class Module {
 		}
 
 		$selected_amount = (int) $selected_raw;
-		$products        = isset( $field['products'] ) && is_array( $field['products'] ) ? $field['products'] : [];
 
-		// Validate the selected amount is actually one of the configured products.
-		foreach ( $products as $product ) {
-			if ( (int) ( $product['amount'] ?? 0 ) === $selected_amount ) {
-				return $selected_amount;
-			}
+		// The selected amount must be one of the configured products.
+		if ( in_array( $selected_amount, self::allowed_amounts( $field ), true ) ) {
+			return $selected_amount;
 		}
 
-		return 0; // Unknown product, caller skips amount check.
+		return null; // Manipulated / unknown selection — caller rejects.
+	}
+
+	/**
+	 * The set of amounts a payment field legitimately accepts.
+	 *
+	 * Fixed mode → the single configured amount. Product mode → every
+	 * configured product's amount. Used both to validate the paid amount
+	 * server-side (verify_payment) and to bind the PaymentIntent amount to
+	 * the form definition instead of trusting the client (create-intent).
+	 *
+	 * @param array<string, mixed> $field Payment field definition.
+	 * @return array<int, int> Allowed amounts in cents (positive values only).
+	 */
+	public static function allowed_amounts( array $field ): array {
+		$mode = (string) ( $field['priceMode'] ?? 'fixed' );
+
+		if ( 'fixed' === $mode ) {
+			$amount = (int) ( $field['amount'] ?? 0 );
+			return $amount > 0 ? [ $amount ] : [];
+		}
+
+		$products = isset( $field['products'] ) && is_array( $field['products'] ) ? $field['products'] : [];
+		$amounts  = [];
+		foreach ( $products as $product ) {
+			$amount = (int) ( $product['amount'] ?? 0 );
+			if ( $amount > 0 ) {
+				$amounts[] = $amount;
+			}
+		}
+		return array_values( array_unique( $amounts ) );
+	}
+
+	/**
+	 * Resolve the expected currency for a payment field, lower-cased.
+	 *
+	 * Field-level currency wins; otherwise the global Stripe setting;
+	 * otherwise EUR. Returns '' only when nothing is configured at all.
+	 *
+	 * @param array<string, mixed> $field Payment field definition.
+	 * @return string Three-letter ISO code, lower-case (e.g. 'eur').
+	 */
+	public static function resolve_currency( array $field ): string {
+		$currency = isset( $field['currency'] ) ? strtolower( trim( (string) $field['currency'] ) ) : '';
+		if ( '' !== $currency ) {
+			return $currency;
+		}
+
+		$settings = get_option( 'flinkform_stripe_settings', [] );
+		$currency = is_array( $settings ) && isset( $settings['currency'] ) ? strtolower( trim( (string) $settings['currency'] ) ) : '';
+
+		return '' !== $currency ? $currency : 'eur';
 	}
 }

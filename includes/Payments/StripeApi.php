@@ -33,9 +33,20 @@ final class StripeApi {
 	 * @param string $currency     Three-letter ISO currency code.
 	 * @param string $description  Shown on the Stripe receipt.
 	 * @param array<string, string> $metadata Optional metadata.
+	 * @param array{
+	 *     receipt_email?: string,
+	 *     automatic_payment_methods?: bool,
+	 *     allow_redirects?: bool
+	 * } $options Extra PaymentIntent options. `automatic_payment_methods`
+	 *           enables the Payment Element method set; `allow_redirects`
+	 *           (default false) keeps it to non-redirect methods only —
+	 *           cards, Apple Pay, Google Pay, Link — for the synchronous
+	 *           confirm-then-submit flow (Stufe A). Redirect/async methods
+	 *           (SEPA, giropay) are unlocked in Stufe B by allowing redirects
+	 *           and handling the return URL.
 	 * @return array{success: bool, client_secret?: string, intent_id?: string, error?: string}
 	 */
-	public function create_payment_intent( int $amount_cents, string $currency, string $description = '', array $metadata = [] ): array {
+	public function create_payment_intent( int $amount_cents, string $currency, string $description = '', array $metadata = [], array $options = [] ): array {
 		$body = [
 			'amount'   => $amount_cents,
 			'currency' => strtolower( $currency ),
@@ -43,6 +54,17 @@ final class StripeApi {
 
 		if ( '' !== $description ) {
 			$body['description'] = $description;
+		}
+
+		if ( ! empty( $options['automatic_payment_methods'] ) ) {
+			$body['automatic_payment_methods[enabled]'] = 'true';
+			// Restrict to methods that confirm in-page (no browser redirect)
+			// unless the caller explicitly opts into redirect flows.
+			$body['automatic_payment_methods[allow_redirects]'] = empty( $options['allow_redirects'] ) ? 'never' : 'always';
+		}
+
+		if ( ! empty( $options['receipt_email'] ) && is_email( (string) $options['receipt_email'] ) ) {
+			$body['receipt_email'] = (string) $options['receipt_email'];
 		}
 
 		foreach ( $metadata as $k => $v ) {

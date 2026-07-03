@@ -73,8 +73,11 @@ $format_amount = static function ( int $cents ) use ( $symbol ): string {
 	data-stripe-key="<?php echo esc_attr( $publishable_key ); ?>"
 	data-currency="<?php echo esc_attr( $currency ); ?>"
 	data-form-id="<?php echo esc_attr( $form_id ); ?>"
+	data-post-id="<?php echo esc_attr( (string) get_the_ID() ); ?>"
 	data-rest-url="<?php echo esc_url( rest_url( 'flinkform-pro/v1/create-intent' ) ); ?>"
 	data-nonce="<?php echo esc_attr( wp_create_nonce( 'flinkform_stripe_intent' ) ); ?>"
+	data-msg-invalid-amount="<?php echo esc_attr__( 'Please choose a payment option.', 'flinkform-pro' ); ?>"
+	data-msg-failed="<?php echo esc_attr__( 'Payment could not be completed. Please try again.', 'flinkform-pro' ); ?>"
 >
 	<label class="flinkform-field__label" for="<?php echo esc_attr( $field_uid ); ?>">
 		<?php echo esc_html( $label ); ?>

@@ -393,6 +393,35 @@ final class DeliveryRepository {
 	}
 
 	/**
+	 * Delete delivery-log rows older than the retention window.
+	 *
+	 * Every accepted submission writes one delivery row per active webhook,
+	 * and those rows are never removed on their own — on a busy form the log
+	 * grows without bound. This range-deletes everything past the cutoff,
+	 * leaning on the `created_at` index (schema v3) so it stays cheap even on
+	 * large tables. Runs from a daily cron in the Webhooks module.
+	 *
+	 * Rows are deleted regardless of status: after the retention window a
+	 * `pending`/`retrying` row is a stuck orphan (retries exhaust within ~36
+	 * minutes), so there is nothing in flight left to protect.
+	 *
+	 * @param int $days Retention window in days. Values below 1 are clamped to 1.
+	 * @return int Rows deleted.
+	 */
+	public function prune_expired( int $days ): int {
+		global $wpdb;
+
+		$days   = max( 1, $days );
+		$cutoff = gmdate( 'Y-m-d H:i:s', time() - ( $days * DAY_IN_SECONDS ) );
+		$table  = Schema::webhook_deliveries_table_name();
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- dedicated custom table; name cannot be parameterised.
+		$deleted = $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE created_at < %s", $cutoff ) );
+
+		return is_numeric( $deleted ) ? (int) $deleted : 0;
+	}
+
+	/**
 	 * Fetch a single delivery row by id.
 	 *
 	 * @param int $id Delivery row id.
