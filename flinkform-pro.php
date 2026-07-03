@@ -70,6 +70,7 @@ function flinkform_pro_advertise_features( array $features ): array {
 	$features[] = 'file_upload';        // File Upload field block + processing
 	$features[] = 'newsletter';         // Brevo / Mailchimp / CleverReach signups
 	$features[] = 'stripe_payments';    // Stripe payment field + processing
+	$features[] = 'calculations';       // Calculation field (formula-computed values)
 
 	// NOTE: multi_step and spam_challenge are no longer advertised — both
 	// live in the free core since 0.4.0 (per the published feature matrix).
@@ -127,6 +128,10 @@ function flinkform_pro_register_modules(): void {
 	// Stripe Payments: payment field block + REST endpoint for PaymentIntents
 	// + server-side verification + admin settings page.
 	( new \FlinkformPro\Payments\Module() )->register();
+
+	// Calculations: formula-computed field with live frontend preview and
+	// authoritative server-side recompute on submit.
+	( new \FlinkformPro\Calculations\Module() )->register();
 
 	// GDPR: privacy-policy content (webhooks + SMTP + payments), a delivery-log
 	// personal-data exporter, and the erasure cascade for webhook delivery rows.

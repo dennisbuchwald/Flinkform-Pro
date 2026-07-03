@@ -1,0 +1,30 @@
+/**
+ * Calculation field — frontend + editor styles (Pro).
+ *
+ * A read-only computed value styled as a quiet summary row: label above,
+ * number emphasised, prefix/suffix set slightly muted around it.
+ */
+
+.flinkform-field--calculation {
+
+	.flinkform-field__calculation-value {
+		display: flex;
+		align-items: baseline;
+		gap: 0.35rem;
+		padding: 0.6rem 0.85rem;
+		border-radius: var(--flinkform-border-radius, 6px);
+		background: color-mix(in srgb, currentColor 5%, transparent);
+		font-size: 1.15em;
+	}
+
+	.flinkform-field__calculation-output {
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.flinkform-field__calculation-prefix,
+	.flinkform-field__calculation-suffix {
+		opacity: 0.7;
+		font-size: 0.9em;
+	}
+}

@@ -1,0 +1,71 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "flinkform/field-calculation",
+  "version": "1.0.0",
+  "title": "Calculation Field",
+  "category": "flinkform",
+  "icon": "calculator",
+  "description": "Show a live-computed value from other fields — quotes, configurators, order totals (Pro).",
+  "keywords": [
+    "calculation",
+    "formula",
+    "total",
+    "berechnung",
+    "summe"
+  ],
+  "textdomain": "flinkform-pro",
+  "parent": [
+    "flinkform/form"
+  ],
+  "supports": {
+    "html": false,
+    "reusable": false
+  },
+  "attributes": {
+    "label": {
+      "type": "string",
+      "default": "Total"
+    },
+    "fieldName": {
+      "type": "string",
+      "default": ""
+    },
+    "fullWidth": {
+      "type": "boolean",
+      "default": false
+    },
+    "conditionalLogic": {
+      "type": "object",
+      "default": {}
+    },
+    "formula": {
+      "type": "string",
+      "default": ""
+    },
+    "decimals": {
+      "type": "number",
+      "default": 2
+    },
+    "prefix": {
+      "type": "string",
+      "default": ""
+    },
+    "suffix": {
+      "type": "string",
+      "default": ""
+    },
+    "helpText": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "usesContext": [
+    "flinkform/formId",
+    "flinkform/appearance"
+  ],
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php",
+  "viewScript": "file:./view.js",
+  "style": "file:./style-index.css"
+}
