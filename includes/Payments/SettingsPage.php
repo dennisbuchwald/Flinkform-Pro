@@ -85,6 +85,12 @@ final class SettingsPage {
 			$settings['secret_key'] = Secret::encrypt( $secret_raw );
 		}
 
+		// Webhook signing secret — stored encrypted. Empty means "keep current".
+		$webhook_raw = sanitize_text_field( wp_unslash( (string) ( $_POST['flinkform_stripe_webhook_secret'] ?? '' ) ) );
+		if ( '' !== $webhook_raw ) {
+			$settings['webhook_secret'] = Secret::encrypt( $webhook_raw );
+		}
+
 		// Currency default.
 		$currency = strtolower( sanitize_text_field( wp_unslash( (string) ( $_POST['flinkform_stripe_currency'] ?? 'eur' ) ) ) );
 		$settings['currency'] = preg_match( '/^[a-z]{3}$/', $currency ) ? $currency : 'eur';
@@ -109,10 +115,12 @@ final class SettingsPage {
 			$settings = [];
 		}
 
-		$mode           = (string) ( $settings['mode'] ?? 'test' );
-		$publishable    = (string) ( $settings['publishable_key'] ?? '' );
-		$has_secret_key = isset( $settings['secret_key'] ) && '' !== $settings['secret_key'];
-		$currency       = (string) ( $settings['currency'] ?? 'eur' );
+		$mode            = (string) ( $settings['mode'] ?? 'test' );
+		$publishable     = (string) ( $settings['publishable_key'] ?? '' );
+		$has_secret_key  = isset( $settings['secret_key'] ) && '' !== $settings['secret_key'];
+		$has_webhook_key = isset( $settings['webhook_secret'] ) && '' !== $settings['webhook_secret'];
+		$currency        = (string) ( $settings['currency'] ?? 'eur' );
+		$webhook_url     = rest_url( 'flinkform-pro/v1/stripe-webhook' );
 		?>
 		<div class="wrap">
 			<h1><?php esc_html_e( 'Stripe Payments', 'flinkform-pro' ); ?></h1>
@@ -153,6 +161,19 @@ final class SettingsPage {
 								<option value="gbp" <?php selected( $currency, 'gbp' ); ?>>GBP</option>
 								<option value="chf" <?php selected( $currency, 'chf' ); ?>>CHF</option>
 							</select>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="flinkform_stripe_webhook_secret"><?php esc_html_e( 'Webhook Signing Secret', 'flinkform-pro' ); ?></label></th>
+						<td>
+							<input type="password" name="flinkform_stripe_webhook_secret" id="flinkform_stripe_webhook_secret" class="regular-text" value="" placeholder="<?php echo $has_webhook_key ? esc_attr__( 'Saved (leave empty to keep)', 'flinkform-pro' ) : 'whsec_...'; ?>" autocomplete="new-password" />
+							<p class="description">
+								<?php esc_html_e( 'Needed for asynchronous payment methods (SEPA Direct Debit): Stripe reports the final payment outcome to your site days after checkout. In the Stripe Dashboard, create a webhook endpoint for this URL and paste its signing secret here:', 'flinkform-pro' ); ?>
+							</p>
+							<p><code><?php echo esc_html( $webhook_url ); ?></code></p>
+							<p class="description">
+								<?php esc_html_e( 'Recommended events: payment_intent.succeeded, payment_intent.payment_failed, payment_intent.canceled, charge.refunded. Without a webhook, SEPA payments simply stay marked as "processing".', 'flinkform-pro' ); ?>
+							</p>
 						</td>
 					</tr>
 				</table>

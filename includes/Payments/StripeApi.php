@@ -91,7 +91,7 @@ final class StripeApi {
 	 * Retrieve a PaymentIntent by ID.
 	 *
 	 * @param string $intent_id Stripe PaymentIntent ID (pi_...).
-	 * @return array{success: bool, status?: string, amount?: int, currency?: string, error?: string}
+	 * @return array{success: bool, status?: string, amount?: int, currency?: string, method?: string, form_id?: string, error?: string}
 	 */
 	public function retrieve_payment_intent( string $intent_id ): array {
 		$response = $this->get( 'payment_intents/' . $intent_id );
@@ -103,11 +103,21 @@ final class StripeApi {
 			];
 		}
 
+		// The payment method actually used, when available (e.g. 'card',
+		// 'sepa_debit'). payment_method_types lists what the intent ACCEPTS,
+		// so it's only a fallback hint before confirmation.
+		$method = '';
+		if ( isset( $response['payment_method_types'] ) && is_array( $response['payment_method_types'] ) && ! empty( $response['payment_method_types'][0] ) ) {
+			$method = (string) $response['payment_method_types'][0];
+		}
+
 		return [
 			'success'  => true,
 			'status'   => (string) ( $response['status'] ?? '' ),
 			'amount'   => (int) ( $response['amount'] ?? 0 ),
 			'currency' => (string) ( $response['currency'] ?? '' ),
+			'method'   => $method,
+			'form_id'  => isset( $response['metadata']['form_id'] ) ? (string) $response['metadata']['form_id'] : '',
 		];
 	}
 

@@ -35,8 +35,9 @@ final class Schema {
 	 *   1 — webhooks + webhook_deliveries (adopted from free core schema v2)
 	 *   2 — mail_log (SMTP send history)
 	 *   3 — webhook_deliveries created_at index (enables cheap log pruning)
+	 *   4 — payments (Stripe PaymentIntent tracking: status model + replay protection)
 	 */
-	public const DB_VERSION = '3';
+	public const DB_VERSION = '4';
 
 	/**
 	 * Option key holding the installed Pro schema version.
@@ -74,6 +75,16 @@ final class Schema {
 	}
 
 	/**
+	 * Resolve the fully-qualified payments table name.
+	 *
+	 * @return string
+	 */
+	public static function payments_table_name(): string {
+		global $wpdb;
+		return $wpdb->prefix . 'flinkform_payments';
+	}
+
+	/**
 	 * Run the schema upgrade only when the stored version is behind.
 	 *
 	 * Cheap option read on the hot path; the actual DDL runs once after an
@@ -101,8 +112,47 @@ final class Schema {
 		self::create_webhooks_table();
 		self::create_webhook_deliveries_table();
 		self::create_mail_log_table();
+		self::create_payments_table();
 
 		update_option( self::OPTION_DB_VERSION, self::DB_VERSION, false );
+	}
+
+	/**
+	 * Stripe payment tracking. One row per PaymentIntent that reached
+	 * server-side verification.
+	 *
+	 * The UNIQUE key on intent_id doubles as replay protection: a
+	 * PaymentIntent that was already consumed by one submission cannot be
+	 * attached to a second one. `status` mirrors Stripe's intent status
+	 * (`processing` for async methods like SEPA until the webhook or a
+	 * re-check settles it to `succeeded`/`failed`).
+	 *
+	 * @return void
+	 */
+	private static function create_payments_table(): void {
+		global $wpdb;
+
+		$table   = self::payments_table_name();
+		$charset = $wpdb->get_charset_collate();
+
+		$sql = "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			submission_id bigint(20) unsigned DEFAULT NULL,
+			form_id varchar(36) NOT NULL DEFAULT '',
+			intent_id varchar(64) NOT NULL,
+			status varchar(32) NOT NULL DEFAULT 'processing',
+			amount bigint(20) unsigned NOT NULL DEFAULT 0,
+			currency varchar(3) NOT NULL DEFAULT '',
+			method varchar(32) NOT NULL DEFAULT '',
+			created_at datetime NOT NULL,
+			updated_at datetime NOT NULL,
+			PRIMARY KEY  (id),
+			UNIQUE KEY intent_id (intent_id),
+			KEY submission_id (submission_id),
+			KEY status (status)
+		) {$charset};";
+
+		dbDelta( $sql );
 	}
 
 	/**
@@ -216,6 +266,7 @@ final class Schema {
 			self::webhook_deliveries_table_name(),
 			self::webhooks_table_name(),
 			self::mail_log_table_name(),
+			self::payments_table_name(),
 		];
 
 		foreach ( $tables as $table ) {

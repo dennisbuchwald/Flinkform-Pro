@@ -82,11 +82,24 @@ final class Module {
 		// Verify the Stripe payment after all fields are validated.
 		add_filter( 'flinkform_process_submission', [ $this, 'verify_payment' ], 20, 3 );
 
-		// REST endpoint for creating PaymentIntents from the frontend.
-		add_action( 'rest_api_init', [ new RestController(), 'register_routes' ] );
+		// Attach the persisted submission to its claimed payment row.
+		add_action( 'flinkform_after_submission', [ $this, 'attach_payment_to_submission' ], 10, 3 );
 
-		// Admin settings page.
+		// REST endpoints: PaymentIntent creation + the Stripe webhook receiver.
+		add_action( 'rest_api_init', [ new RestController(), 'register_routes' ] );
+		add_action( 'rest_api_init', [ new WebhookController(), 'register_routes' ] );
+
+		// Admin: settings page + payment details on the submission detail view.
 		( new SettingsPage() )->register();
+		( new SubmissionSection() )->register();
+
+		// GDPR cascade: deleting submissions removes their payment rows.
+		add_action(
+			'flinkform_submissions_deleted',
+			static function ( $submission_ids ): void {
+				( new PaymentRepository() )->delete_for_submissions( is_array( $submission_ids ) ? $submission_ids : [] );
+			}
+		);
 
 		// Enqueue Stripe.js on pages with a payment form.
 		add_action( 'wp_enqueue_scripts', [ $this, 'maybe_enqueue_stripe_js' ] );
@@ -150,7 +163,21 @@ final class Module {
 			return $result;
 		}
 
-		if ( 'succeeded' !== ( $verify['status'] ?? '' ) ) {
+		// Synchronous methods (card, wallets) confirm as `succeeded`.
+		// Asynchronous methods (SEPA Direct Debit) confirm as `processing`
+		// and settle days later — the Stripe webhook updates the payment row
+		// then. Both count as "payment made" for accepting the submission.
+		$intent_status = (string) ( $verify['status'] ?? '' );
+		if ( ! in_array( $intent_status, [ 'succeeded', 'processing' ], true ) ) {
+			$result['errors'][ $field_name ] = __( 'Payment was not completed. Please try again.', 'flinkform-pro' );
+			return $result;
+		}
+
+		// The intent must have been minted for THIS form (create-intent
+		// stamps the form_id into the metadata) — otherwise an intent
+		// created against a cheap form could be replayed on an expensive one.
+		$intent_form = (string) ( $verify['form_id'] ?? '' );
+		if ( '' !== $intent_form && $intent_form !== $form_id ) {
 			$result['errors'][ $field_name ] = __( 'Payment was not completed. Please try again.', 'flinkform-pro' );
 			return $result;
 		}
@@ -175,7 +202,59 @@ final class Module {
 			return $result;
 		}
 
+		// Replay protection: claim the intent for this submission. A paid
+		// intent can only be consumed ONCE — posting the same pi_... again
+		// (to mint a second accepted submission from one payment) fails here.
+		$claimed = ( new PaymentRepository() )->claim_intent(
+			$intent_id,
+			$form_id,
+			$intent_status,
+			(int) ( $verify['amount'] ?? 0 ),
+			strtolower( (string) ( $verify['currency'] ?? '' ) ),
+			(string) ( $verify['method'] ?? '' )
+		);
+		if ( ! $claimed ) {
+			$result['errors'][ $field_name ] = __( 'This payment was already used for another submission.', 'flinkform-pro' );
+			return $result;
+		}
+
+		// Remember which intent belongs to the submission being persisted so
+		// attach_payment_to_submission() can link the row after the insert.
+		$this->pending_intent = [
+			'intent_id' => $intent_id,
+			'form_id'   => $form_id,
+		];
+
 		return $result;
+	}
+
+	/**
+	 * Intent claimed during verify_payment(), waiting for the submission
+	 * insert of the SAME request. Request-scoped by nature (one submission
+	 * per request through admin-post.php).
+	 *
+	 * @var array{intent_id: string, form_id: string}|null
+	 */
+	private ?array $pending_intent = null;
+
+	/**
+	 * Link the persisted submission to the payment row claimed earlier in
+	 * this request. Runs on `flinkform_after_submission`.
+	 *
+	 * @param int    $submission_id Newly inserted submission row id.
+	 * @param string $form_id       Form UUID.
+	 * @param mixed  $clean         Sanitised values (unused).
+	 * @return void
+	 */
+	public function attach_payment_to_submission( $submission_id, $form_id, $clean ): void {
+		unset( $clean );
+
+		if ( null === $this->pending_intent || $this->pending_intent['form_id'] !== (string) $form_id ) {
+			return;
+		}
+
+		( new PaymentRepository() )->attach_submission( $this->pending_intent['intent_id'], (int) $submission_id );
+		$this->pending_intent = null;
 	}
 
 	/**
