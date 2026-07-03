@@ -33,7 +33,7 @@ function generateFieldName( prefix ) {
 }
 
 export default function Edit( { attributes, setAttributes } ) {
-	const { label, required, helpText, fieldName, allowedTypes, maxSizeMb, attachToEmail } = attributes;
+	const { label, required, helpText, fieldName, allowedTypes, maxSizeMb, attachToEmail, multiple, maxFiles } = attributes;
 	const blockProps = useBlockProps( { className: 'flinkform-field flinkform-field--file is-enhanced' } );
 
 	useEffect( () => {
@@ -110,6 +110,24 @@ export default function Edit( { attributes, setAttributes } ) {
 						__next40pxDefaultSize
 					/>
 					<ToggleControl
+						label={ __( 'Allow multiple files', 'flinkform-pro' ) }
+						help={ __( 'Visitors can attach several files at once — e.g. cover letter, CV and certificates on an application form.', 'flinkform-pro' ) }
+						checked={ !! multiple }
+						onChange={ ( v ) => setAttributes( { multiple: v } ) }
+						__nextHasNoMarginBottom
+					/>
+					{ !! multiple && (
+						<RangeControl
+							label={ __( 'Maximum number of files', 'flinkform-pro' ) }
+							value={ typeof maxFiles === 'number' ? maxFiles : 3 }
+							onChange={ ( v ) => setAttributes( { maxFiles: v } ) }
+							min={ 2 }
+							max={ 10 }
+							__nextHasNoMarginBottom
+							__next40pxDefaultSize
+						/>
+					) }
+					<ToggleControl
 						label={ __( 'Attach file to notification email', 'flinkform-pro' ) }
 						help={ __( 'The uploaded file is attached to the admin notification (up to 8 MB; larger files arrive as a link). Combine with a Data Retention period on the form so the server copy cleans itself up.', 'flinkform-pro' ) }
 						checked={ attachToEmail !== false }
@@ -134,19 +152,27 @@ export default function Edit( { attributes, setAttributes } ) {
 							</svg>
 						</span>
 						<span className="flinkform-field__dropzone-text">
-							<strong>{ __( 'Choose a file', 'flinkform-pro' ) }</strong>
-							{ ' ' + __( 'or drag it here', 'flinkform-pro' ) }
+							<strong>{ multiple ? __( 'Choose files', 'flinkform-pro' ) : __( 'Choose a file', 'flinkform-pro' ) }</strong>
+							{ ' ' + ( multiple ? __( 'or drag them here', 'flinkform-pro' ) : __( 'or drag it here', 'flinkform-pro' ) ) }
 						</span>
 					</div>
 				</div>
 				<p className="flinkform-field__help">
 					{ types.length > 0
-						? sprintf(
-							/* translators: 1: allowed extensions list, 2: max size in MB */
-							__( 'Allowed: %1$s · max. %2$d MB', 'flinkform-pro' ),
-							types.join( ', ' ).toUpperCase(),
-							typeof maxSizeMb === 'number' ? maxSizeMb : 5
-						)
+						? ( multiple
+							? sprintf(
+								/* translators: 1: allowed extensions list, 2: max size in MB, 3: max number of files */
+								__( 'Allowed: %1$s · max. %2$d MB each · up to %3$d files', 'flinkform-pro' ),
+								types.join( ', ' ).toUpperCase(),
+								typeof maxSizeMb === 'number' ? maxSizeMb : 5,
+								typeof maxFiles === 'number' ? maxFiles : 3
+							)
+							: sprintf(
+								/* translators: 1: allowed extensions list, 2: max size in MB */
+								__( 'Allowed: %1$s · max. %2$d MB', 'flinkform-pro' ),
+								types.join( ', ' ).toUpperCase(),
+								typeof maxSizeMb === 'number' ? maxSizeMb : 5
+							) )
 						: __( 'No file types allowed yet', 'flinkform-pro' ) }
 				</p>
 				{ helpText && <p className="flinkform-field__help">{ helpText }</p> }

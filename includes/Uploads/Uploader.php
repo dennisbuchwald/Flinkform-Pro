@@ -91,6 +91,10 @@ final class Uploader {
 	/**
 	 * Whether a usable file arrived for the given field.
 	 *
+	 * Handles both input shapes: a single-file field posts scalar entries
+	 * (`error[field]` is an int), a multi-file field posts arrays
+	 * (`error[field]` is a list of ints).
+	 *
 	 * @param string $field_name
 	 * @return bool
 	 */
@@ -99,9 +103,79 @@ final class Uploader {
 		if ( ! isset( $_FILES[ self::FILES_KEY ]['error'][ $field_name ] ) ) {
 			return false;
 		}
-		$error = (int) $_FILES[ self::FILES_KEY ]['error'][ $field_name ];
+		$error = $_FILES[ self::FILES_KEY ]['error'][ $field_name ];
 		// phpcs:enable
-		return UPLOAD_ERR_NO_FILE !== $error;
+
+		if ( is_array( $error ) ) {
+			foreach ( $error as $code ) {
+				if ( UPLOAD_ERR_NO_FILE !== (int) $code ) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		return UPLOAD_ERR_NO_FILE !== (int) $error;
+	}
+
+	/**
+	 * Normalise the $_FILES entries for a field into a list of standard
+	 * single-file arrays, regardless of whether the input posted the
+	 * scalar (single) or array (multiple) shape. Slots where no file was
+	 * selected (UPLOAD_ERR_NO_FILE) are dropped.
+	 *
+	 * @param string $field_name
+	 * @return array<int, array{name: string, type: string, tmp_name: string, error: int, size: int}>
+	 */
+	private static function incoming_files( string $field_name ): array {
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- nonce verified by the core Handler.
+		$bag = isset( $_FILES[ self::FILES_KEY ] ) && is_array( $_FILES[ self::FILES_KEY ] ) ? $_FILES[ self::FILES_KEY ] : [];
+		// phpcs:enable
+
+		if ( ! isset( $bag['error'][ $field_name ] ) ) {
+			return [];
+		}
+
+		$read_slot = static function ( $name, $type, $tmp, $error, $size ): array {
+			return [
+				'name'     => sanitize_file_name( (string) $name ),
+				'type'     => (string) $type,
+				'tmp_name' => (string) $tmp,
+				'error'    => (int) $error,
+				'size'     => (int) $size,
+			];
+		};
+
+		$files = [];
+
+		if ( is_array( $bag['error'][ $field_name ] ) ) {
+			foreach ( array_keys( $bag['error'][ $field_name ] ) as $i ) {
+				$slot = $read_slot(
+					$bag['name'][ $field_name ][ $i ] ?? '',
+					$bag['type'][ $field_name ][ $i ] ?? '',
+					$bag['tmp_name'][ $field_name ][ $i ] ?? '',
+					$bag['error'][ $field_name ][ $i ] ?? UPLOAD_ERR_NO_FILE,
+					$bag['size'][ $field_name ][ $i ] ?? 0
+				);
+				if ( UPLOAD_ERR_NO_FILE !== $slot['error'] ) {
+					$files[] = $slot;
+				}
+			}
+			return $files;
+		}
+
+		$slot = $read_slot(
+			$bag['name'][ $field_name ] ?? '',
+			$bag['type'][ $field_name ] ?? '',
+			$bag['tmp_name'][ $field_name ] ?? '',
+			$bag['error'][ $field_name ] ?? UPLOAD_ERR_NO_FILE,
+			$bag['size'][ $field_name ] ?? 0
+		);
+		if ( UPLOAD_ERR_NO_FILE !== $slot['error'] ) {
+			$files[] = $slot;
+		}
+
+		return $files;
 	}
 
 	/**
@@ -141,12 +215,17 @@ final class Uploader {
 				continue;
 			}
 
-			$outcome = $this->handle_single( $name, $field );
+			$outcome = $this->handle_field( $name, $field );
 			if ( '' !== $outcome['error'] ) {
 				$result['errors'][ $name ] = $outcome['error'];
 				$result['clean'][ $name ]  = '';
 			} else {
-				$result['clean'][ $name ] = $outcome['url'];
+				// Single-file fields persist a string (backwards compatible),
+				// multi-file fields an array of URLs — the same shape split
+				// the core already uses for checkbox groups.
+				$result['clean'][ $name ] = ! empty( $field['multiple'] )
+					? $outcome['urls']
+					: ( $outcome['urls'][0] ?? '' );
 			}
 		}
 
@@ -154,24 +233,68 @@ final class Uploader {
 	}
 
 	/**
-	 * Validate and store one uploaded file.
+	 * Validate and store every uploaded file of one field.
+	 *
+	 * Fails atomically: if any file is rejected, files already moved in
+	 * this round are unlinked again so a half-uploaded set never persists.
 	 *
 	 * @param string               $field_name
+	 * @param array<string, mixed> $field Field definition.
+	 * @return array{urls: array<int, string>, error: string}
+	 */
+	private function handle_field( string $field_name, array $field ): array {
+		$label = (string) ( $field['label'] ?? $field_name );
+		$files = self::incoming_files( $field_name );
+
+		if ( empty( $files ) ) {
+			/* translators: %s: field label */
+			return [ 'urls' => [], 'error' => sprintf( __( '%s could not be uploaded. Please try again.', 'flinkform-pro' ), $label ) ];
+		}
+
+		$max_files = ! empty( $field['multiple'] ) && isset( $field['maxFiles'] ) && is_numeric( $field['maxFiles'] )
+			? max( 1, (int) $field['maxFiles'] )
+			: 1;
+
+		if ( count( $files ) > $max_files ) {
+			return [
+				'urls'  => [],
+				'error' => sprintf(
+					/* translators: 1: field label, 2: maximum number of files */
+					__( '%1$s accepts up to %2$d files.', 'flinkform-pro' ),
+					$label,
+					$max_files
+				),
+			];
+		}
+
+		$urls = [];
+		foreach ( $files as $file ) {
+			$outcome = $this->handle_single( $file, $field );
+			if ( '' !== $outcome['error'] ) {
+				// Roll back files already stored in this round.
+				foreach ( $urls as $stored_url ) {
+					$stored_path = self::url_to_path( $stored_url );
+					if ( '' !== $stored_path ) {
+						wp_delete_file( $stored_path );
+					}
+				}
+				return [ 'urls' => [], 'error' => $outcome['error'] ];
+			}
+			$urls[] = $outcome['url'];
+		}
+
+		return [ 'urls' => $urls, 'error' => '' ];
+	}
+
+	/**
+	 * Validate and store one uploaded file.
+	 *
+	 * @param array{name: string, type: string, tmp_name: string, error: int, size: int} $file One normalised $_FILES slot.
 	 * @param array<string, mixed> $field Field definition (label, allowedTypes, maxSizeMb).
 	 * @return array{url: string, error: string}
 	 */
-	private function handle_single( string $field_name, array $field ): array {
-		$label = (string) ( $field['label'] ?? $field_name );
-
-		// phpcs:disable WordPress.Security.NonceVerification.Missing -- nonce verified by the core Handler.
-		$file = [
-			'name'     => isset( $_FILES[ self::FILES_KEY ]['name'][ $field_name ] ) ? sanitize_file_name( (string) $_FILES[ self::FILES_KEY ]['name'][ $field_name ] ) : '',
-			'type'     => isset( $_FILES[ self::FILES_KEY ]['type'][ $field_name ] ) ? (string) $_FILES[ self::FILES_KEY ]['type'][ $field_name ] : '',
-			'tmp_name' => isset( $_FILES[ self::FILES_KEY ]['tmp_name'][ $field_name ] ) ? (string) $_FILES[ self::FILES_KEY ]['tmp_name'][ $field_name ] : '',
-			'error'    => isset( $_FILES[ self::FILES_KEY ]['error'][ $field_name ] ) ? (int) $_FILES[ self::FILES_KEY ]['error'][ $field_name ] : UPLOAD_ERR_NO_FILE,
-			'size'     => isset( $_FILES[ self::FILES_KEY ]['size'][ $field_name ] ) ? (int) $_FILES[ self::FILES_KEY ]['size'][ $field_name ] : 0,
-		];
-		// phpcs:enable
+	private function handle_single( array $file, array $field ): array {
+		$label = (string) ( $field['label'] ?? (string) ( $field['name'] ?? '' ) );
 
 		if ( UPLOAD_ERR_OK !== $file['error'] || '' === $file['tmp_name'] || ! is_uploaded_file( $file['tmp_name'] ) ) {
 			/* translators: %s: field label */

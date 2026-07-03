@@ -30,6 +30,8 @@ $required   = ! empty( $attributes['required'] );
 $help_text  = isset( $attributes['helpText'] ) && is_string( $attributes['helpText'] ) ? $attributes['helpText'] : '';
 $field_name = isset( $attributes['fieldName'] ) && is_string( $attributes['fieldName'] ) ? $attributes['fieldName'] : '';
 $max_mb     = isset( $attributes['maxSizeMb'] ) && is_numeric( $attributes['maxSizeMb'] ) ? max( 1, (int) $attributes['maxSizeMb'] ) : 5;
+$multiple   = ! empty( $attributes['multiple'] );
+$max_files  = $multiple && isset( $attributes['maxFiles'] ) && is_numeric( $attributes['maxFiles'] ) ? max( 2, (int) $attributes['maxFiles'] ) : 1;
 
 $allowed = isset( $attributes['allowedTypes'] ) && is_array( $attributes['allowedTypes'] )
 	? array_values( array_filter( array_map( 'sanitize_key', array_map( 'strval', $attributes['allowedTypes'] ) ) ) )
@@ -70,12 +72,20 @@ $described = trim( $hint_id . ' ' . $help_id . ' ' . $error_id );
 			<span class="flinkform-field__required" aria-hidden="true"> *</span>
 		<?php endif; ?>
 	</label>
-	<div class="flinkform-field__dropzone" data-flinkform-dropzone>
+	<div
+		class="flinkform-field__dropzone"
+		data-flinkform-dropzone
+		data-max-size-mb="<?php echo esc_attr( (string) $max_mb ); ?>"
+		data-max-files="<?php echo esc_attr( (string) $max_files ); ?>"
+		data-msg-too-large="<?php echo esc_attr( sprintf( /* translators: %d: maximum size in MB */ __( 'File exceeds the maximum size of %d MB.', 'flinkform-pro' ), $max_mb ) ); ?>"
+		data-msg-too-many="<?php echo esc_attr( sprintf( /* translators: %d: maximum number of files */ __( 'You can upload up to %d files.', 'flinkform-pro' ), $max_files ) ); ?>"
+	>
 		<input
 			type="file"
 			id="<?php echo esc_attr( $field_uid ); ?>"
-			name="flinkform_files[<?php echo esc_attr( $field_name ); ?>]"
+			name="flinkform_files[<?php echo esc_attr( $field_name ); ?>]<?php echo $multiple ? '[]' : ''; ?>"
 			class="flinkform-field__input flinkform-field__input--file"
+			<?php echo $multiple ? 'multiple' : ''; ?>
 			<?php echo '' !== $accept ? 'accept="' . esc_attr( $accept ) . '"' : ''; ?>
 			<?php echo $required ? 'required aria-required="true"' : ''; ?>
 			<?php echo $described ? 'aria-describedby="' . esc_attr( $described ) . '"' : ''; ?>
@@ -91,11 +101,19 @@ $described = trim( $hint_id . ' ' . $help_id . ' ' . $error_id );
 			</span>
 			<span class="flinkform-field__dropzone-text">
 				<?php
-				printf(
-					/* translators: %s: "Choose a file" (rendered bold) */
-					esc_html__( '%s or drag it here', 'flinkform-pro' ),
-					'<strong>' . esc_html__( 'Choose a file', 'flinkform-pro' ) . '</strong>'
-				);
+				if ( $multiple ) {
+					printf(
+						/* translators: %s: "Choose files" (rendered bold) */
+						esc_html__( '%s or drag them here', 'flinkform-pro' ),
+						'<strong>' . esc_html__( 'Choose files', 'flinkform-pro' ) . '</strong>'
+					);
+				} else {
+					printf(
+						/* translators: %s: "Choose a file" (rendered bold) */
+						esc_html__( '%s or drag it here', 'flinkform-pro' ),
+						'<strong>' . esc_html__( 'Choose a file', 'flinkform-pro' ) . '</strong>'
+					);
+				}
 				?>
 			</span>
 		</div>
@@ -116,16 +134,30 @@ $described = trim( $hint_id . ' ' . $help_id . ' ' . $error_id );
 			>&times;</button>
 		</div>
 	</div>
+	<ul class="flinkform-field__file-list" data-flinkform-file-list hidden></ul>
+	<p class="flinkform-field__error" data-flinkform-file-error role="alert" hidden></p>
 	<p class="flinkform-field__help" id="<?php echo esc_attr( $hint_id ); ?>">
 		<?php
-		echo esc_html(
-			sprintf(
-				/* translators: 1: allowed extensions list, 2: max size in MB */
-				__( 'Allowed: %1$s · max. %2$d MB', 'flinkform-pro' ),
-				strtoupper( implode( ', ', $allowed ) ),
-				$max_mb
-			)
-		);
+		if ( $multiple ) {
+			echo esc_html(
+				sprintf(
+					/* translators: 1: allowed extensions list, 2: max size in MB, 3: max number of files */
+					__( 'Allowed: %1$s · max. %2$d MB each · up to %3$d files', 'flinkform-pro' ),
+					strtoupper( implode( ', ', $allowed ) ),
+					$max_mb,
+					$max_files
+				)
+			);
+		} else {
+			echo esc_html(
+				sprintf(
+					/* translators: 1: allowed extensions list, 2: max size in MB */
+					__( 'Allowed: %1$s · max. %2$d MB', 'flinkform-pro' ),
+					strtoupper( implode( ', ', $allowed ) ),
+					$max_mb
+				)
+			);
+		}
 		?>
 	</p>
 	<?php if ( $help_text ) : ?>

@@ -67,6 +67,8 @@ final class Module {
 				return [
 					'allowedTypes'  => isset( $attrs['allowedTypes'] ) && is_array( $attrs['allowedTypes'] ) ? $attrs['allowedTypes'] : [ 'pdf', 'jpg', 'png' ],
 					'maxSizeMb'     => isset( $attrs['maxSizeMb'] ) && is_numeric( $attrs['maxSizeMb'] ) ? (int) $attrs['maxSizeMb'] : 5,
+					'multiple'      => ! empty( $attrs['multiple'] ),
+					'maxFiles'      => isset( $attrs['maxFiles'] ) && is_numeric( $attrs['maxFiles'] ) ? max( 1, (int) $attrs['maxFiles'] ) : 3,
 					// Default true — unset attribute means "attach".
 					'attachToEmail' => ! isset( $attrs['attachToEmail'] ) || false !== $attrs['attachToEmail'],
 				];
@@ -112,6 +114,47 @@ final class Module {
 		add_action( 'flinkform_submissions_before_delete', [ $this, 'collect_files_for_deletion' ] );
 		// …and unlink them once the rows are gone.
 		add_action( 'flinkform_submissions_deleted', [ $this, 'delete_collected_files' ] );
+
+		// Detail view: render stored file URLs as download links instead of
+		// plain text (core seam added in free 1.3.0; older cores fall back
+		// to the default text rendering automatically).
+		add_filter( 'flinkform_admin_format_value', [ $this, 'format_file_value' ], 10, 3 );
+	}
+
+	/**
+	 * flinkform_admin_format_value filter — file URLs as download links.
+	 *
+	 * @param string $html  Pre-escaped HTML ('' = default formatting).
+	 * @param string $type  Field type.
+	 * @param mixed  $value Stored value (string URL or array of URLs).
+	 * @return string
+	 */
+	public function format_file_value( $html, $type, $value ) {
+		if ( 'file' !== $type || '' !== $html ) {
+			return $html;
+		}
+
+		$urls = is_array( $value ) ? array_map( 'strval', $value ) : [ (string) $value ];
+		$urls = array_values( array_filter( $urls ) );
+		if ( empty( $urls ) ) {
+			return '';
+		}
+
+		$links = [];
+		foreach ( $urls as $url ) {
+			// Only link URLs that live in our protected uploads subdir.
+			if ( '' === Uploader::url_to_path( $url ) ) {
+				$links[] = esc_html( $url );
+				continue;
+			}
+			$links[] = sprintf(
+				'<a href="%1$s" target="_blank" rel="noopener noreferrer">%2$s</a>',
+				esc_url( $url ),
+				esc_html( wp_basename( $url ) )
+			);
+		}
+
+		return implode( '<br>', $links );
 	}
 
 	/**
@@ -146,19 +189,24 @@ final class Module {
 				continue;
 			}
 
-			$url  = (string) ( $values[ $field['name'] ?? '' ] ?? '' );
-			$path = '' !== $url ? Uploader::url_to_path( $url ) : '';
-			if ( '' === $path ) {
-				continue;
-			}
+			// Single-file fields store a string, multi-file fields an array.
+			$value = $values[ $field['name'] ?? '' ] ?? '';
+			$urls  = is_array( $value ) ? array_map( 'strval', $value ) : [ (string) $value ];
 
-			$size = (int) filesize( $path );
-			if ( $size <= 0 || $size > $budget ) {
-				continue; // Too large for mail — the link in the body still works.
-			}
+			foreach ( $urls as $url ) {
+				$path = '' !== $url ? Uploader::url_to_path( $url ) : '';
+				if ( '' === $path ) {
+					continue;
+				}
 
-			$attachments[] = $path;
-			$budget       -= $size;
+				$size = (int) filesize( $path );
+				if ( $size <= 0 || $size > $budget ) {
+					continue; // Too large for mail — the link in the body still works.
+				}
+
+				$attachments[] = $path;
+				$budget       -= $size;
+			}
 		}
 
 		$email['attachments'] = $attachments;
@@ -194,9 +242,14 @@ final class Module {
 				if ( ! is_array( $field ) || ( $field['type'] ?? '' ) !== 'file' ) {
 					continue;
 				}
-				$path = Uploader::url_to_path( (string) ( $field['value'] ?? '' ) );
-				if ( '' !== $path ) {
-					$paths[] = $path;
+				// Single-file fields store a string, multi-file fields an array.
+				$value = $field['value'] ?? '';
+				$urls  = is_array( $value ) ? array_map( 'strval', $value ) : [ (string) $value ];
+				foreach ( $urls as $url ) {
+					$path = Uploader::url_to_path( $url );
+					if ( '' !== $path ) {
+						$paths[] = $path;
+					}
 				}
 			}
 

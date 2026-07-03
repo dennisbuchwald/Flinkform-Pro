@@ -81,8 +81,10 @@
 		}
 	}
 
-	// Selected-file card.
-	&.is-enhanced.has-file {
+	// Selected-file card (single-file mode). Multi-file mode keeps the
+	// dropzone in its idle state so more files can be added, and renders
+	// the selection into the list below instead.
+	&.is-enhanced.has-file:not(.is-multiple) {
 
 		.flinkform-field__dropzone {
 			border-style: solid;
@@ -148,6 +150,70 @@
 		background: color-mix(in srgb, currentColor 8%, transparent);
 		color: inherit;
 		font-size: 1.1em;
+		line-height: 1;
+		cursor: pointer;
+		transition: background-color 0.15s ease;
+
+		&:hover,
+		&:focus-visible {
+			background: color-mix(in srgb, #b32d2e 15%, transparent);
+			color: #b32d2e;
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--flinkform-color-primary, currentColor);
+			outline-offset: 1px;
+		}
+	}
+
+	// Multi-file selection list (below the dropzone).
+	.flinkform-field__file-list {
+		list-style: none;
+		margin: 0.5rem 0 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+	}
+
+	.flinkform-field__file-item {
+		display: flex;
+		align-items: center;
+		gap: 0.65rem;
+		padding: 0.45rem 0.65rem;
+		border: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+		border-radius: var(--flinkform-border-radius, 6px);
+		background: color-mix(in srgb, currentColor 3%, transparent);
+		font-size: 0.9em;
+	}
+
+	.flinkform-field__file-item-name {
+		font-weight: 600;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		min-width: 0;
+	}
+
+	.flinkform-field__file-item-size {
+		flex: 0 0 auto;
+		opacity: 0.65;
+		font-size: 0.9em;
+	}
+
+	.flinkform-field__file-item-remove {
+		flex: 0 0 auto;
+		margin-inline-start: auto;
+		inline-size: 1.5rem;
+		block-size: 1.5rem;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		border: 0;
+		border-radius: 50%;
+		background: color-mix(in srgb, currentColor 8%, transparent);
+		color: inherit;
+		font-size: 1em;
 		line-height: 1;
 		cursor: pointer;
 		transition: background-color 0.15s ease;

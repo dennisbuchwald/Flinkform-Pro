@@ -61,6 +61,14 @@
       "type": "number",
       "default": 5
     },
+    "multiple": {
+      "type": "boolean",
+      "default": false
+    },
+    "maxFiles": {
+      "type": "number",
+      "default": 3
+    },
     "attachToEmail": {
       "type": "boolean",
       "default": true
