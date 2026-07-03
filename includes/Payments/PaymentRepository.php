@@ -164,6 +164,35 @@ final class PaymentRepository {
 	}
 
 	/**
+	 * Fetch the payment rows for a set of submissions, keyed by
+	 * submission id. One query for the whole batch (CSV export).
+	 *
+	 * @param array<int, int> $submission_ids Submission ids.
+	 * @return array<int, array<string, mixed>> submission_id → payment row.
+	 */
+	public function find_for_submissions( array $submission_ids ): array {
+		global $wpdb;
+
+		$ids = array_values( array_filter( array_map( 'intval', $submission_ids ) ) );
+		if ( empty( $ids ) ) {
+			return [];
+		}
+
+		$table        = Schema::payments_table_name();
+		$placeholders = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name controlled; placeholders prepared.
+		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$table} WHERE submission_id IN ({$placeholders})", $ids ), ARRAY_A );
+
+		$by_submission = [];
+		foreach ( is_array( $rows ) ? $rows : [] as $row ) {
+			$by_submission[ (int) $row['submission_id'] ] = $row;
+		}
+
+		return $by_submission;
+	}
+
+	/**
 	 * Delete payment rows tied to the given submissions (GDPR cascade).
 	 *
 	 * @param array<int, int> $submission_ids Submission ids.

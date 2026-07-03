@@ -20,6 +20,7 @@ declare( strict_types = 1 );
 namespace FlinkformPro\Export;
 
 use Flinkform\Submissions\Repository;
+use FlinkformPro\Payments\PaymentRepository;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -56,6 +57,13 @@ final class CsvExporter {
 		$columns  = $this->discover_columns( $rows );
 		$filename = 'flinkform-submissions-' . gmdate( 'Ymd-His' ) . '.csv';
 
+		// Batch-load payment rows once. Payment columns only appear when at
+		// least one exported submission actually has a payment — a pure
+		// contact-form export stays as lean as before.
+		$payments = ( new PaymentRepository() )->find_for_submissions(
+			array_map( static fn( array $row ): int => (int) $row['id'], $rows )
+		);
+
 		nocache_headers();
 		header( 'Content-Type: text/csv; charset=utf-8' );
 		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
@@ -71,6 +79,7 @@ final class CsvExporter {
 		// Header row.
 		$header = array_merge(
 			[ 'id', 'form_id', 'created_at', 'status' ],
+			empty( $payments ) ? [] : [ 'payment_status', 'payment_amount', 'payment_currency' ],
 			array_map( static fn( string $col ): string => 'field:' . $col, $columns )
 		);
 		fputcsv( $out, $header );
@@ -83,6 +92,13 @@ final class CsvExporter {
 				(string) $row['created_at'],
 				(string) $row['status'],
 			];
+
+			if ( ! empty( $payments ) ) {
+				$payment = $payments[ (int) $row['id'] ] ?? null;
+				$line[]  = null !== $payment ? (string) $payment['status'] : '';
+				$line[]  = null !== $payment ? number_format( ( (int) $payment['amount'] ) / 100, 2, '.', '' ) : '';
+				$line[]  = null !== $payment ? strtoupper( (string) $payment['currency'] ) : '';
+			}
 
 			$values_by_name = $this->index_values( $row );
 			foreach ( $columns as $col ) {

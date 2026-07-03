@@ -4,6 +4,23 @@
 > Leitprinzip: **alles nativ** (kein externer Dienst, kein SDK außer optional gebündelter
 > PDF-Lib), **DACH-Fokus** (SEPA, giropay, DSGVO, deutsche Zeichensätze).
 
+## Status (1.2.0, Juli 2026)
+
+- ✅ **M0** Release-Blocker (Payment-Bindung, Idempotenz, Webhook-Pruning, CSV-Injection)
+- ✅ **M1** Payment Element sync (Apple/Google Pay, Link, Stripe-Quittung)
+- ✅ **M2** Payment-Status-Modell (payments-Tabelle, Replay-Schutz, Admin-Anzeige)
+- ✅ **M3** SEPA (processing-Status) + Stripe-Webhook-Endpoint (hash_hmac-Signatur)
+- ✅ **M4** Multi-File-Upload (multiple/maxFiles, Client-Checks, Rollback, Download-Links)
+- ✅ **M5** Berechnungsfeld (gespiegelter Evaluator PHP/JS, Insert-Field-Dropdown)
+- ✅ **M7 (Teil)** Payment-Spalten im CSV-Export; Datumsbereich existierte bereits
+- ⬜ **M5b** Payment-Betrag aus Berechnungsfeld (priceMode 'calculation' — Intent-Betrag
+     serverseitig aus Formel + geposteten Werten ableiten)
+- ⬜ **M3b** Redirect-Zahlarten (allow_redirects: always + Return-URL-Handling)
+- ⬜ **M6** PDF-Quittung (Lib-Entscheidung: mPDF empfohlen)
+- ⬜ **M7 (Rest)** Entry-Status/Notizen (Free-Core-Schema), Unread-Badge, Detail-Navigation
+- ⬜ Mail-Log-Resend: NICHT umsetzbar ohne Body-Speicherung (GDPR-lean by design) —
+     bewusst gestrichen
+
 ## Leitgedanke
 
 Mehrere Features teilen sich **ein Fundament: ein sauberes Submission-Status-Modell**
