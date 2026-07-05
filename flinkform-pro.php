@@ -25,8 +25,9 @@ defined( 'ABSPATH' ) || exit;
  * Plugin constants — single source of truth.
  */
 define( 'FLINKFORM_PRO_VERSION', '1.2.0' );
-// Minimum free-core version. 1.0.0 is the first stable Flinkform release.
-define( 'FLINKFORM_PRO_MIN_CORE', '1.0.0' );
+// Minimum free-core version. 1.3.0 ships the duplicate-submission idempotency
+// guard (payment-critical) and the flinkform_admin_format_value seam.
+define( 'FLINKFORM_PRO_MIN_CORE', '1.3.0' );
 define( 'FLINKFORM_PRO_FILE', __FILE__ );
 define( 'FLINKFORM_PRO_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FLINKFORM_PRO_URL', plugin_dir_url( __FILE__ ) );
