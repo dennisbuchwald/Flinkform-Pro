@@ -5,7 +5,7 @@ form plugin. Separate plugin, **not** distributed via WordPress.org — sold wit
 license key and auto-updated from a dedicated endpoint (licensing integration:
 planned via Freemius, not yet wired).
 
-## Features (v1.2.0)
+## Features (v1.2.1)
 
 - **Stripe Payments** — collect payments directly in forms via the **Stripe
   Payment Element**: credit card, **SEPA Direct Debit**, Apple Pay, Google Pay
