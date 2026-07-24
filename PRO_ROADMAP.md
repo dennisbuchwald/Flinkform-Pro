@@ -162,6 +162,10 @@ wegen Umlauten). Einzige Stelle im Plan mit Vendor-Abhängigkeit.
   schon) — billigster Umsatzhebel; vorziehen, sobald Pro kaufbar ist.
 - **Field-Block-Duplikation refactoren** (Audit M4/M5) — macht neue Felder billiger.
 - **`maxLength`-Validierung** (Audit L3).
+- **Adressfeld mit Autocomplete** — Composite-Block (Straße, PLZ, Ort, Land) mit
+  optionaler PLZ→Ort-Auflösung (offline, DE-Datenbank) und optionalem Google Places
+  Autocomplete (API-Key-Management, DSGVO-Hinweis). Statische Variante ggf. Free Core,
+  Autocomplete definitiv Pro.
 - Bewusst ignorieren: Google Sheets (Marken-Widerspruch), Subscriptions (Nische),
   Conversational Forms.
 
