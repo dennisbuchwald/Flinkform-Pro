@@ -660,7 +660,12 @@ final class SmtpPage {
 									placeholder="<?php echo esc_attr( (string) get_option( 'admin_email' ) ); ?>"
 								/>
 								<p class="description">
-									<?php esc_html_e( 'Overrides the WordPress default From-address for plugin emails. Leave empty to keep wp_mail’s default.', 'flinkform-pro' ); ?>
+									<?php esc_html_e( 'Overrides the WordPress default From-address for every email this site sends. Leave empty to keep wp_mail’s default.', 'flinkform-pro' ); ?>
+									<br />
+									<strong><?php esc_html_e( 'Applies even with SMTP switched off', 'flinkform-pro' ); ?></strong>
+									<?php esc_html_e( '— the sender is a wp_mail setting, not a transport one, so you can fix a “wordpress@…” From-address without changing how mail leaves the server.', 'flinkform-pro' ); ?>
+									<br />
+									<?php esc_html_e( 'Use an address on this site’s own domain. A foreign one (a Gmail address, say) will fail SPF and land in spam, because this server is not authorised to send for it.', 'flinkform-pro' ); ?>
 								</p>
 							</td>
 						</tr>

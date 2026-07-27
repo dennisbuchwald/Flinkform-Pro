@@ -33,6 +33,15 @@
  *     is active we explicitly bail out (see should_handle()), so
  *     "last writer wins" never becomes a fight.
  *
+ *   - The transport and the sender are gated separately.
+ *     `should_handle()` guards the SMTP connection and needs the
+ *     master toggle; `should_own_sender()` guards the From pair
+ *     and does not. A From address is a wp_mail() concern that
+ *     applies to PHP mail() just as much as to SMTP, and making
+ *     it hostage to the transport toggle forced sites to switch
+ *     their whole mail delivery just to stop sending as
+ *     "wordpress@".
+ *
  *   - The admin-notice hook is only attached inside wp-admin. The
  *     notice fires on every admin page (not just Flinkform pages),
  *     so an operator who enabled Flinkform SMTP and then installed
@@ -200,7 +209,7 @@ final class Transport {
 	 * @return string
 	 */
 	public function override_from_email( string $from ): string {
-		if ( ! $this->should_handle() ) {
+		if ( ! $this->should_own_sender() ) {
 			return $from;
 		}
 
@@ -218,7 +227,7 @@ final class Transport {
 	 * @return string
 	 */
 	public function override_from_name( string $name ): string {
-		if ( ! $this->should_handle() ) {
+		if ( ! $this->should_own_sender() ) {
 			return $name;
 		}
 
@@ -281,6 +290,30 @@ final class Transport {
 		if ( empty( $settings['enabled'] ) ) {
 			return false;
 		}
+		return false === self::detect_conflict();
+	}
+
+	/**
+	 * Whether this module owns the From address and name.
+	 *
+	 * Deliberately NOT gated on the SMTP toggle, unlike should_handle().
+	 * The From pair is a wp_mail() concern, not a transport one: the
+	 * `wp_mail_from{,_name}` filters apply whether the mail leaves via
+	 * SMTP or PHP mail(). Tying them together meant a site that only
+	 * wanted a proper sender address had to switch its whole mail
+	 * transport to get one, which is a much bigger change than the
+	 * problem warrants.
+	 *
+	 * The conflict check stays: if a dedicated SMTP plugin is active it
+	 * owns the sender, exactly as it owns the transport.
+	 *
+	 * Note the free core's per-form sender still wins over this — it
+	 * registers its own filter at PHP_INT_MAX for the length of that one
+	 * send. This value is the site-wide default beneath it.
+	 *
+	 * @return bool
+	 */
+	private function should_own_sender(): bool {
 		return false === self::detect_conflict();
 	}
 
