@@ -60,6 +60,12 @@ final class Extensions {
 			true
 		);
 
-		wp_set_script_translations( self::HANDLE, 'flinkform-pro' );
+		// The third argument is not optional in practice: without it
+		// WordPress only searches WP_LANG_DIR/plugins, which is filled by
+		// translate.wordpress.org. Pro is not distributed there, so the
+		// bundled JED files would never be read and the editor UI would
+		// stay English on an otherwise translated site. Same fix as the
+		// free core's block registry.
+		wp_set_script_translations( self::HANDLE, 'flinkform-pro', FLINKFORM_PRO_DIR . 'languages' );
 	}
 }
